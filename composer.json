@@ -1,0 +1,20 @@
+{
+    "name": "sinevia/php-library-sqldb",
+    "description": "PHP Library Utils",
+    "version": "0.0.1",
+    "type": "library",
+    "keywords": ["sqldb", "library", "php", "sinevia"],    
+    "homepage": "http://github.com/sinevia/php-library-sqldb",
+    "license": "commercial",
+    "authors": [
+        {
+            "name": "Milan Lesichkov",
+            "email": "lesichkovm@gmail.com",
+            "homepage": "http://lesichkov.co.uk",
+            "role": "Lead Developer"
+        }
+    ],
+    "autoload": {
+        "files": ["src/SqlDb.php"]
+    }
+}
