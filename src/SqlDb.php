@@ -833,7 +833,7 @@ class SqlDb {
         }
         return null;
     }
-    
+
     /**
      * Selects a single column and returns as array
      * @param string $columnName
@@ -1134,7 +1134,7 @@ class SqlDb {
      * @param String the comparison operator ("!=" or "<>", "=","==" or "===", "<", ">", etc.)
      * @param String the value to be compared with
      * @param String the type of comparison (AND-default, OR)
-     * @return SqlDB
+     * @return SqlDb
      * @access public
      */
     function where($column_name, $comparison_operator = null, $value = null, $type = "AND") {
@@ -1147,7 +1147,20 @@ class SqlDb {
         if (isset($this->sql["where"]) == false) {
             $this->sql["where"] = array();
         }
-        $this->sql["where"][] = array("COLUMN" => $column_name, "OPERATOR" => $comparison_operator, "VALUE" => $value, "TYPE" => $type);
+        if (is_string($column_name)) {
+            $this->sql["where"][] = array("COLUMN" => $column_name, "OPERATOR" => $comparison_operator, "VALUE" => $value, "TYPE" => $type);
+        }
+        if (is_array($column_name)) {
+            $array = [];
+            foreach ($column_name as $entry) {
+                $entryColumnName = isset($entry[0]) ? $entry[0] : '';
+                $entryComparisonOperator = isset($entry[1]) ? $entry[1] : null;
+                $entryValue = isset($entry[2]) ? $entry[2] : null;
+                $entryType = isset($entry[3]) ? $entry[3] : 'AND';
+                $array[] = array("COLUMN" => $entryColumnName, "OPERATOR" => $entryComparisonOperator, "VALUE" => $entryValue, "TYPE" => $entryType);
+            }
+            $this->sql["where"][] = array("WHERE" => $array, "TYPE" => $type);
+        }
         return $this;
     }
 
@@ -1266,10 +1279,12 @@ class SqlDb {
                 }
                 // Normal where
                 if (isset($where['COLUMN']) == true) {
-                    if ($where['OPERATOR'] == "==" || $where['OPERATOR'] == "===")
+                    if ($where['OPERATOR'] == "==" || $where['OPERATOR'] == "===") {
                         $where['OPERATOR'] = "=";
-                    if ($where['OPERATOR'] == "!=" || $where['OPERATOR'] == "!==")
+                    }
+                    if ($where['OPERATOR'] == "!=" || $where['OPERATOR'] == "!==") {
                         $where['OPERATOR'] = "<>";
+                    }
                     if ($i == 0) {
                         $sql[] = "`" . $where['COLUMN'] . "` " . $where['OPERATOR'] . " '" . $where['VALUE'] . "'";
                     } else {
@@ -1280,10 +1295,12 @@ class SqlDb {
                     $all = $where['WHERE'];
                     for ($k = 0; $k < count($all); $k++) {
                         $w = $all[$k];
-                        if ($w['OPERATOR'] == "==" || $w['OPERATOR'] == "===")
+                        if ($w['OPERATOR'] == "==" || $w['OPERATOR'] == "===") {
                             $w['OPERATOR'] = "=";
-                        if ($w['OPERATOR'] == "!=" || $w['OPERATOR'] == "!==")
+                        }
+                        if ($w['OPERATOR'] == "!=" || $w['OPERATOR'] == "!==") {
                             $w['OPERATOR'] = "<>";
+                        }
                         if ($k == 0) {
                             $_sql[] = "`" . $w['COLUMN'] . "` " . $w['OPERATOR'] . " '" . $w['VALUE'] . "'";
                         } else {
@@ -1305,10 +1322,12 @@ class SqlDb {
         if ($this->database_type == 'sqlite') {
             for ($i = 0; $i < count($wheres); $i++) {
                 $where = $wheres[$i];
-                if ($where['OPERATOR'] == "==" || $where['OPERATOR'] == "===")
+                if ($where['OPERATOR'] == "==" || $where['OPERATOR'] == "==="){
                     $where['OPERATOR'] = "=";
-                if ($where['OPERATOR'] == "!=")
+                }
+                if ($where['OPERATOR'] == "!="){
                     $where['OPERATOR'] = "<>";
+                }
                 //$sql[] = $where['COLUMN']." ".$where['OPERATOR']." '".$where['VALUE']."'";
                 if ($i == 0) {
                     $sql[] = "" . $where['COLUMN'] . " " . $where['OPERATOR'] . " '" . $where['VALUE'] . "'";
