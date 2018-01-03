@@ -1,7 +1,6 @@
 {
     "name": "sinevia/php-library-sqldb",
     "description": "PHP Library Utils",
-    "version": "1.0.0",
     "type": "library",
     "keywords": ["sqldb", "library", "php", "sinevia"],    
     "homepage": "http://github.com/sinevia/php-library-sqldb",
