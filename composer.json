@@ -4,7 +4,7 @@
     "type": "library",
     "keywords": ["sqldb", "library", "php", "sinevia"],    
     "homepage": "http://github.com/sinevia/php-library-sqldb",
-    "license": "commercial",
+    "license": "proprietary",
     "authors": [
         {
             "name": "Milan Lesichkov",
