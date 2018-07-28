@@ -593,7 +593,7 @@ class SqlDb {
      * @return Object an instance of this database
      * @access public
      */
-    function join($table_name, $column1, $column2) {
+    function join($table_name, $column1, $column2, $type = "", $alias = "") {
         if (is_string($table_name) == false) {
             throw new RuntimeException('In class ' . get_class($this) . ' in method join($table_name,$column1,$column2): $table_name parameter MUST BE of type string');
         }
@@ -606,7 +606,7 @@ class SqlDb {
         if (isset($this->sql["join"]) == false) {
             $this->sql["join"] = array();
         }
-        $this->sql["join"][] = array($table_name, $column1, $column2);
+        $this->sql["join"][] = array($table_name, $column1, $column2, $type, $alias);
         return $this;
     }
 
@@ -1249,7 +1249,13 @@ class SqlDb {
         // MySQL
         if ($this->database_type == 'mysql') {
             foreach ($join as $what) {
-                $sql = ' JOIN `' . $what[0] . '`';
+                $type = $what[3] ?? '';
+                $alias = $what[4] ?? '';
+                $sql .= ' ' . $type . ' JOIN `' . $what[0] . '`';
+                if ($alias != "") {
+                    $sql .= ' AS ' . $alias . '';
+                    $what[0] = $alias;
+                }
                 if ($what[1] == $what[2]) {
                     $sql .= ' USING (`' . $what[1] . '`)';
                 } else {
@@ -1260,10 +1266,17 @@ class SqlDb {
         // SQLite
         if ($this->database_type == 'sqlite') {
             foreach ($join as $what) {
-                $sql = " JOIN '" . $what[0] . "'";
+                $type = $what[3] ?? '';
+                $alias = $what[4] ?? '';
+                $sql .= " $type JOIN '" . $what[0] . "'";
+                if ($alias != "") {
+                    $sql .= " AS '$alias'";
+                    $what[0] = $alias;
+                }
                 $sql .= ' ON ' . $table_name . '.' . $what[1] . '=' . $what[0] . '.' . $what[2];
             }
         }
+        
         return $sql;
     }
 
@@ -1322,10 +1335,10 @@ class SqlDb {
         if ($this->database_type == 'sqlite') {
             for ($i = 0; $i < count($wheres); $i++) {
                 $where = $wheres[$i];
-                if ($where['OPERATOR'] == "==" || $where['OPERATOR'] == "==="){
+                if ($where['OPERATOR'] == "==" || $where['OPERATOR'] == "===") {
                     $where['OPERATOR'] = "=";
                 }
-                if ($where['OPERATOR'] == "!="){
+                if ($where['OPERATOR'] == "!=") {
                     $where['OPERATOR'] = "<>";
                 }
                 //$sql[] = $where['COLUMN']." ".$where['OPERATOR']." '".$where['VALUE']."'";
