@@ -91,9 +91,9 @@ class SqlDb {
     public $sql = array();
     public $sqlLog = array();
 
-    //========================= START OF METHOD ===========================//
-    //  METHOD: __construct                                                //
-    //=====================================================================//
+//========================= START OF METHOD ===========================//
+//  METHOD: __construct                                                //
+//=====================================================================//
     function __construct($options = array()) {
         $this->database_type = isset($options['database_type']) == false ? '' : trim($options['database_type']);
         $this->database_name = isset($options['database_name']) == false ? '' : trim($options['database_name']);
@@ -131,7 +131,7 @@ class SqlDb {
             $database_host = '';
             if ($this->database_host != '') {
                 $database_host = str_replace("\\", DIRECTORY_SEPARATOR, str_replace("/", DIRECTORY_SEPARATOR, $this->database_host));
-                // Add final backslash
+// Add final backslash
                 if (substr($database_host, -1, 1) != DIRECTORY_SEPARATOR) {
                     $database_host = $database_host . DIRECTORY_SEPARATOR;
                 }
@@ -144,12 +144,12 @@ class SqlDb {
             $this->dsn = 'mysql:dbname=' . $this->database_name . ';host=' . $this->database_host;
         }
 
-        // If no DSN and no auto DSN created
+// If no DSN and no auto DSN created
         if ($this->dsn == '') {
             die('DSN not set');
         }
 
-        // Open connection
+// Open connection
         try {
             $this->dbh = new \PDO($this->dsn, $this->database_user, $this->database_pass);
             $this->dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
@@ -281,7 +281,7 @@ class SqlDb {
      * @access public
      */
     function create($table_columns = array()) {
-        // START: Creating new table
+// START: Creating new table
         if (isset($this->sql["table"])) {
             $table_name = $this->sql["table"][0];
             $table_columns = count($table_columns) > 0 ? $table_columns : (isset($this->sql["columns"][$table_name]) == false ? array() : $this->sql["columns"][$table_name]);
@@ -297,14 +297,14 @@ class SqlDb {
                 return false;
             return true;
         }
-        // END: Creating new table
-        // START: Creating new database
+// END: Creating new table
+// START: Creating new database
         else {
             if ($this->debug) {
                 $this->debug('START: Creating database "' . $this->database_name . '"...');
             }
             $this->sql = array(); // Emptying the SQL array
-            // MySQL
+// MySQL
             if ($this->database_type == 'mysql') {
                 $sql = 'CREATE DATABASE `' . $this->database_name . '`;';
                 $temp_dbname = $this->database_name;
@@ -329,7 +329,7 @@ class SqlDb {
                 }
             }
 
-            // SQLite
+// SQLite
             if ($this->database_type == 'sqlite') {
                 $result = $this->open();
                 if ($result == true) {
@@ -344,7 +344,7 @@ class SqlDb {
             }
             return false;
         }
-        // END: Creating new database
+// END: Creating new database
     }
 
     /** The delete method deletes a row in a table. For deleting a database
@@ -391,7 +391,7 @@ class SqlDb {
      * @access public
      */
     function drop() {
-        // Drop table SQL query
+// Drop table SQL query
         if (isset($this->sql["table"])) {
             $table_name = $this->sql["table"][0];
             if ($this->database_type == 'mysql') {
@@ -407,7 +407,7 @@ class SqlDb {
             return true;
         }
 
-        // START: Deleting database
+// START: Deleting database
         else {
             $this->sql = array(); // Emptying the SQL array
             if ($this->debug) {
@@ -430,7 +430,7 @@ class SqlDb {
                 $database_host = '';
                 if ($this->database_host != '') {
                     $database_host = str_replace("\\", DIRECTORY_SEPARATOR, str_replace("/", DIRECTORY_SEPARATOR, $this->database_host));
-                    // Add final backslash
+// Add final backslash
                     if (substr($database_host, -1, 1) != DIRECTORY_SEPARATOR)
                         $database_host = $database_host . DIRECTORY_SEPARATOR;
                 }
@@ -448,7 +448,7 @@ class SqlDb {
                 }
             }
         }
-        // END: Deleting database
+// END: Deleting database
     }
 
     /** The <b>exists</b> method checks, if a database or a table exists.
@@ -471,7 +471,7 @@ class SqlDb {
      * @access public
      */
     function exists() {
-        // Checking tables
+// Checking tables
         if (isset($this->sql["table"])) {
             $table_name = $this->sql["table"][0];
             $this->sql = array(); // Emptying the SQL array
@@ -492,7 +492,7 @@ class SqlDb {
             }
         }
 
-        // START: Checking database
+// START: Checking database
         else {
             $this->sql = array(); // Emptying the SQL array
             if ($this->debug) {
@@ -520,7 +520,7 @@ class SqlDb {
                 $database_host = '';
                 if ($this->database_host != '') {
                     $database_host = str_replace("\\", DIRECTORY_SEPARATOR, str_replace("/", DIRECTORY_SEPARATOR, $this->database_host));
-                    // Add final backslash
+// Add final backslash
                     if (substr($database_host, -1, 1) != DIRECTORY_SEPARATOR)
                         $database_host = $database_host . DIRECTORY_SEPARATOR;
                 }
@@ -536,7 +536,7 @@ class SqlDb {
                 return $result;
             }
         }
-        // END: Check database
+// END: Check database
     }
 
     function groupBy($column_name) {
@@ -630,12 +630,12 @@ class SqlDb {
      * @access public
      */
     function lastInsertId() {
-        // MySQL
+// MySQL
         if ($this->database_type == 'mysql') {
             $sql = 'SELECT LAST_INSERT_ID();';
         }
 
-        // SQLite
+// SQLite
         if ($this->database_type == 'sqlite') {
             $sql = 'SELECT LAST_INSERT_ROW_ID();';
             return $this->dbh->lastInsertId();
@@ -690,12 +690,12 @@ class SqlDb {
 
         $table_name = $this->sql["table"][0];
 
-        // MySQL
+// MySQL
         if ($this->database_type == 'mysql') {
             $sql = 'SELECT `' . $column_name . '` FROM `' . $table_name . '` ORDER BY `' . $column_name . '` DESC LIMIT 1';
         }
 
-        // SQLite
+// SQLite
         if ($this->database_type == 'sqlite') {
             $sql = "SELECT " . $column_name . " FROM '" . $table_name . "' ORDER BY " . $column_name . " DESC LIMIT 1";
         }
@@ -736,12 +736,12 @@ class SqlDb {
         $limit = (isset($this->sql["limit"]) == false) ? '' : " LIMIT " . $this->sql["limit"];
         $join = isset($this->sql["join"]) == false ? '' : $this->join_to_sql($this->sql["join"], $table_name);
 
-        // MySQL
+// MySQL
         if ($this->database_type == 'mysql') {
             $sql = 'SELECT COUNT(*) FROM `' . $table_name . '`' . $join . $where . $orderby . $limit . ';';
         }
 
-        // SQLite
+// SQLite
         if ($this->database_type == 'sqlite') {
             $sql = "SELECT COUNT(*) FROM '" . $table_name . "'" . $join . $where . $orderby . $limit . ";";
         }
@@ -879,9 +879,9 @@ class SqlDb {
             $result = $this->executeQuery($sql);
             foreach ($result as $row) {
                 $column = array();
-                // Name
+// Name
                 $column[0] = $row['Field'];
-                // Type
+// Type
                 $column[1] = $row['Type'];
                 if ($unisex == true) {
                     if (stripos($row['Type'], 'int') !== false) {
@@ -897,7 +897,7 @@ class SqlDb {
                     }
                 }
 
-                // Properties
+// Properties
                 $column[2] = '';
                 if (stripos($row['Null'], 'no') !== false) {
                     $column[2] .= ' NOT NULL';
@@ -906,8 +906,8 @@ class SqlDb {
                     $column[2] .= ' PRIMARY KEY';
                 } else if (stripos($row['Key'], 'uni') !== false) {
                     if (stripos($row['Extra'], 'auto') !== false) {
-                        // SQL does not support UNIQUE at the moment
-                        // so we replace it with Primary Key :(
+// SQL does not support UNIQUE at the moment
+// so we replace it with Primary Key :(
                         $column[2] .= ' PRIMARY KEY';
                     } else {
                         $column[2] .= ' UNIQUE';
@@ -923,15 +923,15 @@ class SqlDb {
             $sql = "SELECT * FROM 'SQLITE_MASTER' WHERE type='table' ORDER BY NAME ASC";
             $sql = "PRAGMA table_info('$table_name')";
             $result = $this->executeQuery($sql);
-            //var_dump($result);
-            //echo '<hr>';
+//var_dump($result);
+//echo '<hr>';
             foreach ($result as $row) {
                 $column = array();
-                // Name
+// Name
 
                 $column[0] = $row['name'];
 
-                // Type
+// Type
                 $column[1] = $row['type'];
                 if ($unisex == true) {
                     if (stripos($row['type'], 'int') !== false) {
@@ -947,7 +947,7 @@ class SqlDb {
                     }
                 }
 
-                // Properties
+// Properties
                 $column[2] = '';
                 if ($row['notnull'] == 99) {
                     $column[2] .= ' NOT NULL';
@@ -960,10 +960,10 @@ class SqlDb {
                 }
                 $column[2] = trim($column['PROPERTIES']);
 
-                // Default value
-                //$column['DEFAULT'] = $row['dflt_value'];
-                // Primary key
-                //$column['PRIMARY_KEY'] = ($row['pk']==1)?'yes':'no';
+// Default value
+//$column['DEFAULT'] = $row['dflt_value'];
+// Primary key
+//$column['PRIMARY_KEY'] = ($row['pk']==1)?'yes':'no';
 
                 $table_columns[] = $column;
             }
@@ -985,7 +985,7 @@ class SqlDb {
     function tables() {
         $tables = array();
         if ($this->database_type == 'mysql') {
-            //$sql = "SHOW TABLES";
+//$sql = "SHOW TABLES";
             $sql = "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_SCHEMA='" . $this->database_name . "'";
             $result = $this->executeQuery($sql);
             if ($result === false)
@@ -1052,11 +1052,11 @@ class SqlDb {
                 // 16 bits for "time_mid"
                 mt_rand(0, 0xffff),
                 // 16 bits for "time_hi_and_version",
-                // four most significant bits holds version number 4
+// four most significant bits holds version number 4
                 mt_rand(0, 0x0fff) | 0x4000,
                 // 16 bits, 8 bits for "clk_seq_hi_res",
-                // 8 bits for "clk_seq_low",
-                // two most significant bits holds zero and one for variant DCE1.1
+// 8 bits for "clk_seq_low",
+// two most significant bits holds zero and one for variant DCE1.1
                 mt_rand(0, 0x3fff) | 0x8000,
                 // 48 bits for "node"
                 mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
@@ -1176,11 +1176,11 @@ class SqlDb {
      */
     private function columns_to_sql($columns) {
         $sql = '';
-        // MySQL
+// MySQL
         if ($this->database_type == 'mysql') {
             $sql_columns = array();
             foreach ($columns as $column) {
-                //var_dump($column);
+//var_dump($column);
                 $column_name = $column[0];
                 $column_type = $column[1];
                 $column_properties = isset($column[2]) ? $column[2] : '';
@@ -1203,20 +1203,20 @@ class SqlDb {
                     $column_properties = str_ireplace('AUTOINCREMENT', 'AUTO_INCREMENT', $column_properties);
                     $sql_column .= " " . $column_properties;
                 }
-                // 				$sql_column = "`".$column['column_name']."`";
-                // 				if(strtolower(trim($column['column_type']))=="integer"){ $sql_column .= " BIGINT"; }
-                // 				else if(strtolower(trim($column['column_type']))=="string"){ $sql_column .= " VARCHAR(255)"; }
-                // 				else if(strtolower(trim($column['column_type']))=="float"){ $sql_column .= " DOUBLE"; }
-                // 				else if(strtolower(trim($column['column_type']))=="text"){ $sql_column .= " LONGTEXT"; }
-                // 				else if(strtolower(trim($column['column_type']))=="blob"){ $sql_column .= " LONGBLOB"; }
-                // 				else { $sql_column .= " ". $column['column_type']; }
-                // 				if($column['column_properties']!=null){ $sql_column .= " ".$column['column_properties']; }
+// 				$sql_column = "`".$column['column_name']."`";
+// 				if(strtolower(trim($column['column_type']))=="integer"){ $sql_column .= " BIGINT"; }
+// 				else if(strtolower(trim($column['column_type']))=="string"){ $sql_column .= " VARCHAR(255)"; }
+// 				else if(strtolower(trim($column['column_type']))=="float"){ $sql_column .= " DOUBLE"; }
+// 				else if(strtolower(trim($column['column_type']))=="text"){ $sql_column .= " LONGTEXT"; }
+// 				else if(strtolower(trim($column['column_type']))=="blob"){ $sql_column .= " LONGBLOB"; }
+// 				else { $sql_column .= " ". $column['column_type']; }
+// 				if($column['column_properties']!=null){ $sql_column .= " ".$column['column_properties']; }
                 $sql_columns[] = $sql_column;
             }
             $sql = implode(",", $sql_columns);
         }
 
-        // SQLite
+// SQLite
         if ($this->database_type == 'sqlite') {
             $sql_columns = array();
             foreach ($columns as $column) {
@@ -1227,7 +1227,7 @@ class SqlDb {
                 $sql_column = $column_name . " " . $column_type;
                 if (isset($column['column_properties'])) {
                     $column_properties = $column_properties;
-                    // No AUTOINCREMENT field in SQLite
+// No AUTOINCREMENT field in SQLite
                     $column_properties = str_ireplace('AUTO_INCREMENT', '', $column_properties);
                     $column_properties = str_ireplace('AUTOINCREMENT', '', $column_properties);
                     $sql_column .= " " . $column_properties;
@@ -1246,7 +1246,7 @@ class SqlDb {
      */
     private function join_to_sql($join, $table_name) {
         $sql = '';
-        // MySQL
+// MySQL
         if ($this->database_type == 'mysql') {
             foreach ($join as $what) {
                 $type = $what[3] ?? '';
@@ -1263,7 +1263,7 @@ class SqlDb {
                 }
             }
         }
-        // SQLite
+// SQLite
         if ($this->database_type == 'sqlite') {
             foreach ($join as $what) {
                 $type = $what[3] ?? '';
@@ -1276,13 +1276,34 @@ class SqlDb {
                 $sql .= ' ON ' . $table_name . '.' . $what[1] . '=' . $what[0] . '.' . $what[2];
             }
         }
-        
+
+        return $sql;
+    }
+
+    private function whereToSqlSingle($column, $operator, $value) {
+        if ($this->database_type == 'mysql') {
+            $column = explode('.', $column);
+            $columnQuoted = "`" . implode("`.`", $column) . "`";
+            if ($operator == "==" OR $operator == "===") {
+                $operator = "=";
+            }
+            if ($operator == "!=" || $operator == "!==") {
+                $operator = "<>";
+            }
+            if ($value == NULL AND $operator == "=") {
+                $sql = $columnQuoted . " IS NULL";
+            } elseif ($value == NULL AND $operator == "<>") {
+                $sql = $columnQuoted . " IS NOT NULL";
+            } else {
+                $sql = $columnQuoted . " " . $operator . " '" . $value . "'";
+            }
+        }
         return $sql;
     }
 
     private function where_to_sql($wheres) {
         $sql = array();
-        // MySQL
+// MySQL
         if ($this->database_type == 'mysql') {
             for ($i = 0; $i < count($wheres); $i++) {
                 $where = $wheres[$i];
@@ -1290,34 +1311,24 @@ class SqlDb {
                     $sql[] = $where;
                     continue;
                 }
-                // Normal where
+// Normal where
                 if (isset($where['COLUMN']) == true) {
-                    if ($where['OPERATOR'] == "==" || $where['OPERATOR'] == "===") {
-                        $where['OPERATOR'] = "=";
-                    }
-                    if ($where['OPERATOR'] == "!=" || $where['OPERATOR'] == "!==") {
-                        $where['OPERATOR'] = "<>";
-                    }
+                    $sqlSingle = $this->whereToSqlSingle($where['COLUMN'], $where['OPERATOR'], $where['VALUE']);
                     if ($i == 0) {
-                        $sql[] = "`" . $where['COLUMN'] . "` " . $where['OPERATOR'] . " '" . $where['VALUE'] . "'";
+                        $sql[] = $sqlSingle;
                     } else {
-                        $sql[] = $where['TYPE'] . " `" . $where['COLUMN'] . "` " . $where['OPERATOR'] . " '" . $where['VALUE'] . "'";
+                        $sql[] = $where['TYPE'] . ' ' . $sqlSingle;
                     }
                 } else {
                     $_sql = array();
                     $all = $where['WHERE'];
                     for ($k = 0; $k < count($all); $k++) {
                         $w = $all[$k];
-                        if ($w['OPERATOR'] == "==" || $w['OPERATOR'] == "===") {
-                            $w['OPERATOR'] = "=";
-                        }
-                        if ($w['OPERATOR'] == "!=" || $w['OPERATOR'] == "!==") {
-                            $w['OPERATOR'] = "<>";
-                        }
+                        $sqlSingle = $this->whereToSqlSingle($w['COLUMN'], $w['OPERATOR'], $w['VALUE']);
                         if ($k == 0) {
-                            $_sql[] = "`" . $w['COLUMN'] . "` " . $w['OPERATOR'] . " '" . $w['VALUE'] . "'";
+                            $_sql[] = $sqlSingle;
                         } else {
-                            $_sql[] = $w['TYPE'] . " `" . $w['COLUMN'] . "` " . $w['OPERATOR'] . " '" . $w['VALUE'] . "'";
+                            $_sql[] = $w['TYPE'] . " " . $sqlSingle;
                         }
                     }
                     $_sql = (count($_sql) > 0) ? " (" . implode(" ", $_sql) . ")" : "";
@@ -1331,7 +1342,7 @@ class SqlDb {
             }
             return (count($sql) > 0) ? " WHERE " . implode(" ", $sql) : "";
         }
-        // SQLite
+// SQLite
         if ($this->database_type == 'sqlite') {
             for ($i = 0; $i < count($wheres); $i++) {
                 $where = $wheres[$i];
@@ -1341,28 +1352,28 @@ class SqlDb {
                 if ($where['OPERATOR'] == "!=") {
                     $where['OPERATOR'] = "<>";
                 }
-                //$sql[] = $where['COLUMN']." ".$where['OPERATOR']." '".$where['VALUE']."'";
+//$sql[] = $where['COLUMN']." ".$where['OPERATOR']." '".$where['VALUE']."'";
                 if ($i == 0) {
                     $sql[] = "" . $where['COLUMN'] . " " . $where['OPERATOR'] . " '" . $where['VALUE'] . "'";
                 } else {
                     $sql[] = $where['TYPE'] . " " . $where['COLUMN'] . " " . $where['OPERATOR'] . " '" . $where['VALUE'] . "'";
                 }
             }
-            //return (count($sql)>0)? " WHERE ".implode(" AND ",$sql):"";
+//return (count($sql)>0)? " WHERE ".implode(" AND ",$sql):"";
             return (count($sql) > 0) ? " WHERE " . implode(" ", $sql) : "";
         }
     }
 
     private function groupby_to_sql($groupbys) {
         $sql = array();
-        // MySQL
+// MySQL
         if ($this->database_type == 'mysql') {
             foreach ($groupbys as $groupby) {
                 $sql[] = "`" . $groupby['COLUMN'] . "`";
             }
             return (count($sql) > 0) ? " GROUP BY " . implode(", ", $sql) : "";
         }
-        // SQLite
+// SQLite
         if ($this->database_type == 'sqlite') {
             foreach ($groupbys as $groupby) {
                 $sql[] = "" . $groupby['COLUMN'];
@@ -1373,7 +1384,7 @@ class SqlDb {
 
     private function orderby_to_sql($orderbys) {
         $sql = array();
-        // MySQL
+// MySQL
         if ($this->database_type == 'mysql') {
             foreach ($orderbys as $orderby) {
                 if (strtolower($orderby['ORDER_TYPE']) == "desc" || strtolower($orderby['ORDER_TYPE']) == "descendng") {
@@ -1385,7 +1396,7 @@ class SqlDb {
             }
             return (count($sql) > 0) ? " ORDER BY " . implode(", ", $sql) : "";
         }
-        // SQLite
+// SQLite
         if ($this->database_type == 'sqlite') {
             foreach ($orderbys as $orderby) {
                 if (strtolower($orderby['ORDER_TYPE']) == "desc" || strtolower($orderby['ORDER_TYPE']) == "descendng") {
@@ -1409,7 +1420,7 @@ class SqlDb {
         if ($this->debug) {
             echo "<span style='font-weight:bold;color:red;'>DEBUG:</span> " . $msg . "<br />";
         }
-        //\LogBucket::log(LOGBUCKET_KEY, $msg);
+//\LogBucket::log(LOGBUCKET_KEY, $msg);
     }
 
 }
