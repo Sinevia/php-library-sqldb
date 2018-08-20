@@ -3,7 +3,7 @@
 PHP Library for working with SQL databases.
 
 ## Background ##
-- MySQL and SQLite supported
+- MySQL, SQlite and SQLiteDB (SQLite in the cloud) supported
 - Unified data types. The data types are developer orientated (string, text, integer, float, blob). These are then translated to the correct column type for the corresponding database.
 - Fluent interface for building queries
 
@@ -51,7 +51,16 @@ $db = new SqlDB(array(
     'database_pass'=>'db_pass'
 ));
 
-// SQLiteDB
+// Creating a new SQLite Database
+$sqlitedb = new SqlDB(array(
+    'database_type'=>'sqlite',
+    'database_name'=>'db_name',
+    'database_host'=>'db_host',
+    'database_user'=>'db_user',
+    'database_pass'=>'db_pass'
+));
+
+// SQLiteDB (SQLite in the cloud)
 $db = new SqlDB(array(
     'database_type'=>'sqlitedb',
     'database_host'=>'sqlitedb_api_url',
