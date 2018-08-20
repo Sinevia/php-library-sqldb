@@ -56,9 +56,9 @@ $db = new SqlDB(array(
 
 ```php
 // Check if table already exists?
-if ($db->table("user")->exists() == false) {
+if ($db->table("person")->exists() == false) {
     // Create table
-    $database->table("person")
+    $db->table("person")
         ->column("Id", "INTEGER", "NOT NULL PRIMARY KEY")
         ->column("FirstName", "STRING")
         ->column("LastName", "STRING")
@@ -66,3 +66,14 @@ if ($db->table("user")->exists() == false) {
 }
 ```
 
+### 3) Inserting rows ###
+
+```php
+$db->table('person')->insert([
+    'FirstName' => 'Peter',
+    'LastName' => 'Pan',
+]);
+
+// Getting the new autoincremented ID
+$insertedId = $db->lastInsertId();
+```
