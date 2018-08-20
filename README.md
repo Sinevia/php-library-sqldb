@@ -75,5 +75,19 @@ $db->table('person')->insert([
 ]);
 
 // Getting the new autoincremented ID
-$insertedId = $db->lastInsertId();
+$personId = $db->lastInsertId();
+```
+
+
+### 4) Selecting rows ###
+
+```php
+//Selects all the rows from the table
+$rows = $db->table("person")->select();
+
+// Selects the rows where the column NAME is different from Peter, in descending order
+$rows = $db->table("person")
+    ->where("Name", "!=", "Peter")
+    ->orderby("Name","desc")
+    ->select();
 ```
