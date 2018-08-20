@@ -43,7 +43,7 @@ Add the following to your composer file.
 
 ```php
 // MySQL
-$db = new SqlDB(array(
+$db = new Sinevia\SqlDB(array(
     'database_type'=>'mysql',
     'database_name'=>'db_name',
     'database_host'=>'db_host',
@@ -52,7 +52,7 @@ $db = new SqlDB(array(
 ));
 
 // Creating a new SQLite Database
-$sqlitedb = new SqlDB(array(
+$sqlitedb = new Sinevia\SqlDB(array(
     'database_type'=>'sqlite',
     'database_name'=>'db_name',
     'database_host'=>'db_host',
@@ -61,7 +61,7 @@ $sqlitedb = new SqlDB(array(
 ));
 
 // SQLiteDB (SQLite in the cloud)
-$db = new SqlDB(array(
+$db = new Sinevia\SqlDB(array(
     'database_type'=>'sqlitedb',
     'database_host'=>'sqlitedb_api_url',
     'database_pass'=>'sqlitedb_api_key'
@@ -107,4 +107,14 @@ $rows = $db->table("person")
     ->where("Name", "!=", "Peter")
     ->orderby("Name","desc")
     ->select();
+```
+
+### 5) Deleting rows ###
+
+```php
+// Delete row by ID
+$rows = $db->table("person")->where("Id", "==", "1")->delete();
+
+// Delete all rows in the table
+$rows = $db->table("person")->delete();
 ```
