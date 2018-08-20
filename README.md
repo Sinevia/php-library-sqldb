@@ -42,12 +42,20 @@ Add the following to your composer file.
 
 
 ```php
+// MySQL
 $db = new SqlDB(array(
     'database_type'=>'mysql',
     'database_name'=>'db_name',
     'database_host'=>'db_host',
     'database_user'=>'db_user',
     'database_pass'=>'db_pass'
+));
+
+// SQLiteDB
+$db = new SqlDB(array(
+    'database_type'=>'sqlitedb',
+    'database_host'=>'sqlitedb_api_url',
+    'database_pass'=>'sqlitedb_api_key'
 ));
 ```
 
