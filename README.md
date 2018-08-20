@@ -9,15 +9,16 @@ PHP Library for working with SQL databases.
 
 ## Installation ##
 
-Add the following to your composer file:
+1) Via composer command line
+```sh
+composer require sinevia/php-library-sqldb
+```
+
+2) Via composer file:
+
+Add the following to your composer file.
 
 ```json
-   "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/sinevia/php-library-sqldb.git"
-        }
-    ],
     "require": {
         "sinevia/php-library-sqldb": "dev-master"
     },
