@@ -38,7 +38,7 @@ Add the following to your composer file.
 
 ## Usage ##
 
-### 1) Creating new instance ###
+### 1) Creating a new database instance ###
 
 
 ```php
@@ -68,8 +68,16 @@ $db = new Sinevia\SqlDB(array(
 ));
 ```
 
+### 2) Drop a database ###
 
-### 2) Creating new table ###
+Depending on your database hosting this may or may not be supported
+
+```php
+// Dropping a database
+$db->drop();
+```
+
+### 3) Creating a new table ###
 
 ```php
 // Check if table already exists?
@@ -83,10 +91,17 @@ if ($db->table("person")->exists() == false) {
 }
 ```
 
+### 3) Drop a table ###
+
+```php
+// Dropping a table
+$isOk = $db->table("person")->drop();
+```
+
 ### 3) Inserting rows ###
 
 ```php
-$db->table('person')->insert([
+$isOk = $db->table('person')->insert([
     'FirstName' => 'Peter',
     'LastName' => 'Pan',
 ]);
@@ -109,12 +124,25 @@ $rows = $db->table("person")
     ->select();
 ```
 
+### 5) Updating rows ###
+
+```php
+// Delete row by ID
+$isOk = $db->table("person")
+    ->where("Id", "==", "1")
+    ->update([
+        'LastName' => 'Voldemort'
+    ]);
+```
+
 ### 5) Deleting rows ###
 
 ```php
 // Delete row by ID
-$rows = $db->table("person")->where("Id", "==", "1")->delete();
+$isOk = $db->table("person")
+    ->where("Id", "==", "1")
+    ->delete();
 
 // Delete all rows in the table
-$rows = $db->table("person")->delete();
+$isOk = $db->table("person")->delete();
 ```
