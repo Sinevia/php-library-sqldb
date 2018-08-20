@@ -4,10 +4,8 @@ PHP Library for working with SQL databases.
 
 ## Background ##
 - MySQL and SQLite supported
-- Unified column names
-  It supports unified column type convention that is more developer orientated. It is then translated to the correct column type for the corresponding database.
-
-
+- Unified data types. The data types are developer orientated (string, text, integer, float, blob). These are then translated to the correct column type for the corresponding database.
+- Fluent interface for building queries
 
 ## Installation ##
 
@@ -25,14 +23,24 @@ Add the following to your composer file:
     },
 ```
 
+## Data Types ##
+
+| Data Type | MySLQ Data Type | SQLite Data Type |
+|-----------|-----------------|------------------|
+| STRING    | VARCHAR         | TEXT             |
+| TEXT      | LONG TEXT       | TEXT             |
+| INTGER    | BIG INT         | INTEGER          |
+| FLOAT     | DOUBLE          | FLOAT            |
+| BLOB      | LONG BLOB       | TEXT             |
+
+
+
 ## Usage ##
 
 ### 1) Creating new instance ###
 
 
-```
-#!php
-
+```php
 $db = new SqlDB(array(
     'database_type'=>'mysql',
     'database_name'=>'db_name',
@@ -45,12 +53,15 @@ $db = new SqlDB(array(
 
 ### 2) Creating new table ###
 
-
-```
-#!php
-
-if($db->table("user")->exists()==false){
-    $database->table("user")->column("Id","INTEGER", "NOT NULL PRIMARY KEY")->column("Name","STRING")->create();
+```php
+// Check if table already exists?
+if ($db->table("user")->exists() == false) {
+    // Create table
+    $database->table("person")
+        ->column("Id", "INTEGER", "NOT NULL PRIMARY KEY")
+        ->column("FirstName", "STRING")
+        ->column("LastName", "STRING")
+        ->create();
 }
 ```
 
