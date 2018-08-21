@@ -13,6 +13,9 @@
             "role": "Lead Developer"
         }
     ],
+    "require": {
+        "laravel/framework": "5.5.*",
+    },
     "autoload": {
         "files": [
             "src/SqlDb.php",
