@@ -28,10 +28,10 @@ Add the latest stable version to your composer file, and update via composer
 
 | Data Type | MySLQ Data Type | SQLite Data Type |
 |-----------|-----------------|------------------|
-| STRING    | VARCHAR         | TEXT             |
+| STRING    | VARCHAR (255)   | TEXT             |
 | TEXT      | LONG TEXT       | TEXT             |
 | INTGER    | BIG INT         | INTEGER          |
-| FLOAT     | DOUBLE          | FLOAT            |
+| FLOAT     | DOUBLE          | REAL             |
 | BLOB      | LONG BLOB       | TEXT             |
 
 
