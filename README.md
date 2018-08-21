@@ -16,12 +16,12 @@ composer require sinevia/php-library-sqldb
 
 2) Via composer file:
 
-Add the following to your composer file.
+Add the latest stable version to your composer file, and update via composer
 
 ```json
-    "require": {
-        "sinevia/php-library-sqldb": "dev-master"
-    },
+"require": {
+    "sinevia/php-library-sqldb": "2.2.0"
+}
 ```
 
 ## Data Types ##
