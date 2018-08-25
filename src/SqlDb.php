@@ -91,9 +91,10 @@ class SqlDb {
     public $sql = array();
     public $sqlLog = array();
 
-    //========================= START OF METHOD ===========================//
-    //  METHOD: __construct                                                //
-    //=====================================================================//
+    /**
+     * Constructor
+     * @param array $options
+     */
     function __construct($options = array()) {
         $this->database_type = isset($options['database_type']) == false ? '' : trim($options['database_type']);
         $this->database_name = isset($options['database_name']) == false ? '' : trim($options['database_name']);
@@ -111,6 +112,10 @@ class SqlDb {
         return $this->dbh;
     }
 
+    /**
+     * Sets the PDO object to be used for the instance
+     * @param \PDO $pdo
+     */
     function setPdo($pdo) {
         $this->dbh = $pdo;
         $name = $this->dbh->getAttribute(\PDO::ATTR_DRIVER_NAME);
@@ -122,6 +127,12 @@ class SqlDb {
         }
     }
 
+    /**
+     * Opens the connection to the database. By default opening the
+     * connection is handled automatically, and direct calls to this
+     * function are not needed.
+     * @return boolean
+     */
     function open() {
         if ($this->dbh != false) {
             return true;
@@ -164,6 +175,12 @@ class SqlDb {
         return false;
     }
 
+    /**
+     * Closes the connection to the database. By default closing the
+     * connection is handled automatically, and direct calls to this
+     * function are not needed.
+     * @return void
+     */
     function close() {
         $this->dbh = null;
     }
@@ -171,7 +188,10 @@ class SqlDb {
     /** The column method specifies the desired columns in a table.
      * <code>
      * // Creating table USERS with two columns USER_ID, and USER_NAME
-     * $database->table("USERS")->column("USER_ID","INTEGER")->column("USER_NAME","STRING")->create();
+     * $database->table("USERS")
+     *     ->column("USER_ID","INTEGER")
+     *     ->column("USER_NAME","STRING")
+     *     ->create();
      * </code>
      * @param String the name of the column
      * @param String the type of the column (STRING, INTEGER, FLOAT, TEXT, BLOB)
@@ -199,6 +219,11 @@ class SqlDb {
         return $this;
     }
 
+    /**
+     * Used by the SQLiteDb queries
+     * @param string $sql
+     * @return string
+     */
     function post($sql) {
         $http = new HttpClient($this->database_host);
         $result = $http->post([
@@ -219,8 +244,8 @@ class SqlDb {
         return $response;
     }
 
-    /** The executeNonQuery method executes an non-row fetching SQL.
-     *
+    /**
+     * The executeNonQuery method executes an non-row fetching SQL.
      * <code>
      * // Selecting all the rows from a database
      * $result = $database->executeNonQuery("INSERT INTO TABLE_NAME");
@@ -270,7 +295,8 @@ class SqlDb {
         return false;
     }
 
-    /** The executeQuery method will execute a SQL query and will return
+    /**
+     * The executeQuery method will execute a SQL query and will return
      * the results in a PHP array. Default is associative array.
      *
      * <code>
@@ -335,7 +361,9 @@ class SqlDb {
      * $database->create();
      *
      * // Creating a new table
-     * $database->table("STATES")->column("STATE_NAME","STRING")->create();
+     * $database->table("STATES")
+     *     ->column("STATE_NAME","STRING")
+     *     ->create();
      * </code>
      * @return boolean true, on success, false, otherwise
      * @access public
@@ -405,7 +433,8 @@ class SqlDb {
         // END: Creating new database
     }
 
-    /** The delete method deletes a row in a table. For deleting a database
+    /**
+     * The delete method deletes a row in a table. For deleting a database
      * or table use the drop method.
      * <code>
      * // Deleting a row
@@ -437,7 +466,8 @@ class SqlDb {
         return $result;
     }
 
-    /** The drop method drops/deletes a database or table.
+    /**
+     * The drop method drops/deletes a database or table.
      * <code>
      * // Dropping a database
      * $database->drop();
@@ -460,8 +490,9 @@ class SqlDb {
             }
             $this->sql = array(); // Emptying the SQL array
             $result = $this->executeNonQuery($sql);
-            if ($result === false)
+            if ($result === false) {
                 return false;
+            }
             return true;
         }
 
@@ -489,8 +520,9 @@ class SqlDb {
                 if ($this->database_host != '') {
                     $database_host = str_replace("\\", DIRECTORY_SEPARATOR, str_replace("/", DIRECTORY_SEPARATOR, $this->database_host));
                     // Add final backslash
-                    if (substr($database_host, -1, 1) != DIRECTORY_SEPARATOR)
+                    if (substr($database_host, -1, 1) != DIRECTORY_SEPARATOR) {
                         $database_host = $database_host . DIRECTORY_SEPARATOR;
+                    }
                 }
                 $database_path = $database_host . $this->database_name;
                 if (@unlink($database_path)) {
@@ -509,19 +541,21 @@ class SqlDb {
         // END: Deleting database
     }
 
-    /** The <b>exists</b> method checks, if a database or a table exists.
+    /**
+     * The <b>exists</b> method checks, if a database or a table exists.
+     * Keep in mind the check is case insensitive.
      * <code>
      * // Checking, if a database exists
-     * if($database->exists()==false){
+     * if ($database->exists() == false){
      *   echo "Database exists!"
-     * }else{
+     * } else {
      *   echo "Database does not exist!"
      * }
      *
      * // Checking, if a table exists
-     * if($database->table("STATES")->exists()==false){
+     * if ($database->table("STATES")->exists() == false) {
      *   echo "Table exists!"
-     * }else{
+     * } else {
      *   echo "Table does not exist!"
      * }
      * </code>
@@ -575,6 +609,7 @@ class SqlDb {
                 }
                 return $result;
             }
+
             if ($this->database_type == 'sqlite' OR $this->database_type == 'sqlitedb') {
                 $database_host = '';
                 if ($this->database_host != '') {
@@ -598,6 +633,11 @@ class SqlDb {
         // END: Check database
     }
 
+    /**
+     * Groups by a column name
+     * @param type $column_name
+     * @return $this
+     */
     function groupBy($column_name) {
         if (isset($this->sql["groupby"]) == false) {
             $this->sql["groupby"] = array();
@@ -606,7 +646,8 @@ class SqlDb {
         return $this;
     }
 
-    /** Inserts a row in a table.
+    /**
+     * Inserts a row in a table.
      * <code>
      * $user = array("USER_ID"=>3,"USER_MANE"=>"Peter");
      * $database->table("USERS")->insert($user);
@@ -648,6 +689,7 @@ class SqlDb {
     }
 
     /**
+     * Joins two tables
      * @param String the name of the table
      * @return Object an instance of this database
      * @access public
@@ -669,7 +711,8 @@ class SqlDb {
         return $this;
     }
 
-    /** Return the last autogenerated ID by this database
+    /**
+     * Returns the last autogenerated ID by this database
      * Note! Not implemented for the Text DB
      *
      * <code>
@@ -707,10 +750,11 @@ class SqlDb {
         return $result[0]["LAST_INSERT_ID()"];
     }
 
-    /** Specifies the limit of the selection.
+    /**
+     * Specifies the limit of the selection.
      * <code>
      * // Selects the first ten rows from the table
-     * $database->table("USERS")->limit(0,10)->select();
+     * $database->table("USERS")->limit(0, 10)->select();
      * </code>
      * @param int the start of the selection
      * @param int the end of the selection
@@ -728,7 +772,8 @@ class SqlDb {
         return $this;
     }
 
-    /** Return the last autogenerated ID by this database
+    /**
+     * Returns the last autogenerated ID by this database
      * Note! Not implemented for the Text DB
      *
      * <code>
@@ -760,7 +805,9 @@ class SqlDb {
         }
 
         $this->sql = array(); // Emptying the SQL array
+
         $result = $this->executeQuery($sql);
+
         if ($result === false) {
             return false;
         }
@@ -802,7 +849,7 @@ class SqlDb {
             $sql = 'SELECT COUNT(*) FROM `' . $table_name . '`' . $join . $where . $orderby . $limit . ';';
         }
 
-        // SQLite
+        // SQLite and SQLiteDb
         if ($this->database_type == 'sqlite' OR $this->database_type == 'sqlitedb') {
             $sql = "SELECT COUNT(*) FROM '" . $table_name . "'" . $join . $where . $orderby . $limit . ";";
         }
@@ -814,7 +861,8 @@ class SqlDb {
         return $result[0]['COUNT(*)'];
     }
 
-    /** The <b>orderby</b> method specifies in what order (ascending or descending)
+    /**
+     * The <b>orderby</b> method specifies in what order (ascending or descending)
      * a selection is to be made.
      * <code>
      * // Selects the row from USERS in alphabetical order based on column "USER_NAME"
@@ -844,7 +892,10 @@ class SqlDb {
      * $db->table("USERS")->select();
      *
      * // Selects the rows where the column NAME is different from Peter, in descending order
-     * $db->table("USERS")->where("NAME","!=","Peter")->orderby("NAME","desc")->select();
+     * $db->table("USERS")
+     *     ->where("NAME","!=","Peter")
+     *     ->orderby("NAME","desc")
+     *     ->select();
      * </code>
      * @return mixed rows as associative array, false on error
      * @access public
@@ -907,7 +958,8 @@ class SqlDb {
         return array_column($result, $clumnName);
     }
 
-    /** The <b>table</b> method specifies the table, to which an
+    /**
+     * The <b>table</b> method specifies the table, to which an
      * operation is to be done.
      * <code>
      * // Selects all from table "STATES"
@@ -923,7 +975,8 @@ class SqlDb {
         return $this;
     }
 
-    /** The columns method returns the columns in a table.
+    /**
+     * The columns method returns the columns in a table.
      * <code>
      * $table_columns = $database->table('USERS')->columns();
      * </code>
@@ -1036,7 +1089,8 @@ class SqlDb {
         return $table_columns;
     }
 
-    /** The <b>tables</b> method returns the names of all the tables, that
+    /**
+     * The <b>tables</b> method returns the names of all the tables, that
      * exist in the database.
      * <code>
      * foreach($database->tables() as $table){
@@ -1064,7 +1118,7 @@ class SqlDb {
         if ($this->database_type == 'sqlite' OR $this->database_type == 'sqlitedb') {
             $sql = "SELECT * FROM 'SQLITE_MASTER' WHERE type='table' ORDER BY NAME ASC";
             $result = $this->executeQuery($sql);
-            if ($result === false){
+            if ($result === false) {
                 return false;
             }
             foreach ($result as $row) {
@@ -1100,6 +1154,20 @@ class SqlDb {
     function transactionRollBack() {
         $this->open();
         return $this->dbh->rollBack();
+    }
+
+    /**
+     * Returns a unique date driven numeric id with default of 20 numbers
+     * This is a helper function to simplify generating unique identifiers.
+     * <code>
+     * $uid = SqlDB::uid(20);
+     * $uid = SqlDB::uid(32);
+     * </code>
+     * @return  string
+     */
+    public static function uid($length = 20) {
+        $uid = date('YmdHis') . substr(explode(" ", microtime())[0], 2, 8) . rand(100000000000, 999999999999);
+        return substr($uid, 0, $length);
     }
 
     /**
@@ -1230,6 +1298,11 @@ class SqlDb {
         return $this;
     }
 
+    /**
+     * Raw SQL
+     * @param string $sqlWhere
+     * @return $this
+     */
     function whereRaw($sqlWhere) {
         $this->sql["where"][] = $sqlWhere;
         return $this;
@@ -1333,6 +1406,11 @@ class SqlDb {
         return $sql;
     }
 
+    /**
+     * Converts wheres to SQL
+     * @param type $wheres
+     * @return type
+     */
     private function where_to_sql($wheres) {
         $sql = array();
         // MySQL
@@ -1459,14 +1537,21 @@ class SqlDb {
      * @return void
      */
     protected function debug($msg) {
-        if ($this->debug) {
-            echo "<span style='font-weight:bold;color:red;'>DEBUG:</span> " . $msg . "<br />";
+        $isCli = false;
+        if (defined('STDIN')) {
+            $isCli = true;
         }
-        //\LogBucket::log(LOGBUCKET_KEY, $msg);
+
+        if (empty($_SERVER['REMOTE_ADDR']) and ! isset($_SERVER['HTTP_USER_AGENT']) and count($_SERVER['argv']) > 0) {
+            $isCli = true;
+        }
+        if ($this->debug) {
+            if ($isCli) {
+                echo "DEBUG: " . date('Ymd H:i:s') . " - " . $msg . "\n";
+            } else {
+                echo "<span style='font-weight:bold;color:red;'>DEBUG:</span> " . $msg . "<br />";
+            }
+        }
     }
 
 }
-
-//===========================================================================//
-// CLASS: SqlDB                                                              //
-//============================== END OF CLASS ===============================//
