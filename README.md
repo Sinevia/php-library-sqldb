@@ -146,3 +146,20 @@ $isOk = $db->table("person")
 // Delete all rows in the table
 $isOk = $db->table("person")->delete();
 ```
+
+## Helper Functions ##
+
+### 1) Generating UUIDs ###
+
+```php
+$uuid = Sinevia\SqlDB::uuid();
+```
+
+### 2) Generating HUIDs ###
+
+HUIDs are human friendly unique identifiers, which are date based.
+
+```php
+$uid20 = Sinevia\SqlDB::uid(); // 20 digits default
+$uid32 = Sinevia\SqlDB::uid(32); // 32 digits
+```
