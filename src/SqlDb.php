@@ -1362,6 +1362,22 @@ class SqlDb {
                 $column_name = $column[0];
                 $column_type = $column[1];
                 $column_properties = isset($column[2]) ? $column[2] : '';
+                
+                if (strtolower(trim($column_type)) == "integer") {
+                    $column_type = "INTEGER";
+                } else if (strtolower(trim($column_type)) == "string") {
+                    $column_type = "TEXT";
+                } else if (strtolower(trim($column_type)) == "float") {
+                    $column_type = " REAL";
+                } else if (strtolower(trim($column_type)) == "text") {
+                    $column_type = " TEXT";
+                } else if (strtolower(trim($column_type)) == "blob") {
+                    $column_type = " BLOB";
+                } else if (strtolower(trim($column_type)) == "date") {
+                    $column_type = " TEXT";
+                } else if (strtolower(trim($column_type)) == "datetime") {
+                    $column_type = " TEXT";
+                }
 
                 $sql_column = $column_name . " " . $column_type;
                 if (isset($column['column_properties'])) {
