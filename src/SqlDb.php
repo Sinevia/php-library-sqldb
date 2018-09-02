@@ -694,7 +694,7 @@ class SqlDb {
      * @return Object an instance of this database
      * @access public
      */
-    function join($table_name, $column1, $column2) {
+    function join($table_name, $column1, $column2, $type = "", $alias = "") {
         if (is_string($table_name) == false) {
             throw new RuntimeException('In class ' . get_class($this) . ' in method join($table_name,$column1,$column2): $table_name parameter MUST BE of type string');
         }
@@ -707,7 +707,7 @@ class SqlDb {
         if (isset($this->sql["join"]) == false) {
             $this->sql["join"] = array();
         }
-        $this->sql["join"][] = array($table_name, $column1, $column2);
+        $this->sql["join"][] = array($table_name, $column1, $column2, $type, $alias);
         return $this;
     }
 
@@ -1362,7 +1362,7 @@ class SqlDb {
                 $column_name = $column[0];
                 $column_type = $column[1];
                 $column_properties = isset($column[2]) ? $column[2] : '';
-                
+
                 if (strtolower(trim($column_type)) == "integer") {
                     $column_type = "INTEGER";
                 } else if (strtolower(trim($column_type)) == "string") {
@@ -1404,7 +1404,13 @@ class SqlDb {
         // MySQL
         if ($this->database_type == 'mysql') {
             foreach ($join as $what) {
-                $sql = ' JOIN `' . $what[0] . '`';
+                $type = $what[3] ?? '';
+                $alias = $what[4] ?? '';
+                $sql .= ' ' . $type . ' JOIN `' . $what[0] . '`';
+                if ($alias != "") {
+                    $sql .= ' AS ' . $alias . '';
+                    $what[0] = $alias;
+                }
                 if ($what[1] == $what[2]) {
                     $sql .= ' USING (`' . $what[1] . '`)';
                 } else {
@@ -1415,8 +1421,36 @@ class SqlDb {
         // SQLite
         if ($this->database_type == 'sqlite' OR $this->database_type == 'sqlitedb') {
             foreach ($join as $what) {
-                $sql = " JOIN '" . $what[0] . "'";
+                $type = $what[3] ?? '';
+                $alias = $what[4] ?? '';
+                $sql .= " $type JOIN '" . $what[0] . "'";
+                if ($alias != "") {
+                    $sql .= " AS '$alias'";
+                    $what[0] = $alias;
+                }
                 $sql .= ' ON ' . $table_name . '.' . $what[1] . '=' . $what[0] . '.' . $what[2];
+            }
+        }
+
+        return $sql;
+    }
+    
+    private function whereToSqlSingle($column, $operator, $value) {
+        if ($this->database_type == 'mysql') {
+            $column = explode('.', $column);
+            $columnQuoted = "`" . implode("`.`", $column) . "`";
+            if ($operator == "==" OR $operator == "===") {
+                $operator = "=";
+            }
+            if ($operator == "!=" || $operator == "!==") {
+                $operator = "<>";
+            }
+            if ($value == NULL AND $operator == "=") {
+                $sql = $columnQuoted . " IS NULL";
+            } elseif ($value == NULL AND $operator == "<>") {
+                $sql = $columnQuoted . " IS NOT NULL";
+            } else {
+                $sql = $columnQuoted . " " . $operator . " '" . $value . "'";
             }
         }
         return $sql;
@@ -1433,38 +1467,29 @@ class SqlDb {
         if ($this->database_type == 'mysql') {
             for ($i = 0; $i < count($wheres); $i++) {
                 $where = $wheres[$i];
+                // Is it a raw where query?
                 if (is_string($where)) {
                     $sql[] = $where;
                     continue;
                 }
                 // Normal where
                 if (isset($where['COLUMN']) == true) {
-                    if ($where['OPERATOR'] == "==" || $where['OPERATOR'] == "===") {
-                        $where['OPERATOR'] = "=";
-                    }
-                    if ($where['OPERATOR'] == "!=" || $where['OPERATOR'] == "!==") {
-                        $where['OPERATOR'] = "<>";
-                    }
+                    $sqlSingle = $this->whereToSqlSingle($where['COLUMN'], $where['OPERATOR'], $where['VALUE']);
                     if ($i == 0) {
-                        $sql[] = "`" . $where['COLUMN'] . "` " . $where['OPERATOR'] . " '" . $where['VALUE'] . "'";
+                        $sql[] = $sqlSingle;
                     } else {
-                        $sql[] = $where['TYPE'] . " `" . $where['COLUMN'] . "` " . $where['OPERATOR'] . " '" . $where['VALUE'] . "'";
+                        $sql[] = $where['TYPE'] . ' ' . $sqlSingle;
                     }
                 } else {
                     $_sql = array();
                     $all = $where['WHERE'];
                     for ($k = 0; $k < count($all); $k++) {
                         $w = $all[$k];
-                        if ($w['OPERATOR'] == "==" || $w['OPERATOR'] == "===") {
-                            $w['OPERATOR'] = "=";
-                        }
-                        if ($w['OPERATOR'] == "!=" || $w['OPERATOR'] == "!==") {
-                            $w['OPERATOR'] = "<>";
-                        }
+                        $sqlSingle = $this->whereToSqlSingle($w['COLUMN'], $w['OPERATOR'], $w['VALUE']);
                         if ($k == 0) {
-                            $_sql[] = "`" . $w['COLUMN'] . "` " . $w['OPERATOR'] . " '" . $w['VALUE'] . "'";
+                            $_sql[] = $sqlSingle;
                         } else {
-                            $_sql[] = $w['TYPE'] . " `" . $w['COLUMN'] . "` " . $w['OPERATOR'] . " '" . $w['VALUE'] . "'";
+                            $_sql[] = $w['TYPE'] . " " . $sqlSingle;
                         }
                     }
                     $_sql = (count($_sql) > 0) ? " (" . implode(" ", $_sql) . ")" : "";
@@ -1482,19 +1507,52 @@ class SqlDb {
         if ($this->database_type == 'sqlite' OR $this->database_type == 'sqlitedb') {
             for ($i = 0; $i < count($wheres); $i++) {
                 $where = $wheres[$i];
-                if ($where['OPERATOR'] == "==" || $where['OPERATOR'] == "===") {
-                    $where['OPERATOR'] = "=";
+                // Is it a raw where query?
+                if (is_string($where)) {
+                    $sql[] = $where;
+                    continue;
                 }
-                if ($where['OPERATOR'] == "!=") {
-                    $where['OPERATOR'] = "<>";
-                }
-                //$sql[] = $where['COLUMN']." ".$where['OPERATOR']." '".$where['VALUE']."'";
-                if ($i == 0) {
-                    $sql[] = "" . $where['COLUMN'] . " " . $where['OPERATOR'] . " '" . $where['VALUE'] . "'";
+                // Normal where
+                if (isset($where['COLUMN']) == true) {
+                    if ($where['OPERATOR'] == "==" || $where['OPERATOR'] == "===") {
+                        $where['OPERATOR'] = "=";
+                    }
+                    if ($where['OPERATOR'] == "!=") {
+                        $where['OPERATOR'] = "<>";
+                    }
+                    //$sql[] = $where['COLUMN']." ".$where['OPERATOR']." '".$where['VALUE']."'";
+                    if ($i == 0) {
+                        $sql[] = "" . $where['COLUMN'] . " " . $where['OPERATOR'] . " '" . $where['VALUE'] . "'";
+                    } else {
+                        $sql[] = $where['TYPE'] . " " . $where['COLUMN'] . " " . $where['OPERATOR'] . " '" . $where['VALUE'] . "'";
+                    }
                 } else {
-                    $sql[] = $where['TYPE'] . " " . $where['COLUMN'] . " " . $where['OPERATOR'] . " '" . $where['VALUE'] . "'";
+                    $_sql = array();
+                    $all = $where['WHERE'];
+                    for ($k = 0; $k < count($all); $k++) {
+                        $w = $all[$k];
+                        if ($w['OPERATOR'] == "==" || $w['OPERATOR'] == "===") {
+                            $w['OPERATOR'] = "=";
+                        }
+                        if ($w['OPERATOR'] == "!=" || $w['OPERATOR'] == "!==") {
+                            $w['OPERATOR'] = "<>";
+                        }
+                        if ($k == 0) {
+                            $_sql[] = "" . $w['COLUMN'] . " " . $w['OPERATOR'] . " '" . $w['VALUE'] . "'";
+                        } else {
+                            $_sql[] = $w['TYPE'] . " " . $w['COLUMN'] . " " . $w['OPERATOR'] . " '" . $w['VALUE'] . "'";
+                        }
+                    }
+                    $_sql = (count($_sql) > 0) ? " (" . implode(" ", $_sql) . ")" : "";
+
+                    if ($i == 0) {
+                        $sql[] = $_sql;
+                    } else {
+                        $sql[] = $where['TYPE'] . " " . $_sql;
+                    }
                 }
             }
+            
             //return (count($sql)>0)? " WHERE ".implode(" AND ",$sql):"";
             return (count($sql) > 0) ? " WHERE " . implode(" ", $sql) : "";
         }
