@@ -955,7 +955,7 @@ class SqlDb {
      */
     function selectColumn($columnName) {
         $results = $this->select([$columnName]);
-        return array_column($result, $columnName);
+        return array_column($results, $columnName);
     }
 
     /**
