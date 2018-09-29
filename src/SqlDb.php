@@ -635,7 +635,7 @@ class SqlDb {
 
     /**
      * Groups by a column name
-     * @param type $column_name
+     * @param SqlDb $column_name
      * @return $this
      */
     function groupBy($column_name) {
@@ -691,7 +691,7 @@ class SqlDb {
     /**
      * Joins two tables
      * @param String the name of the table
-     * @return Object an instance of this database
+     * @return SqlDb an instance of this database
      * @access public
      */
     function join($table_name, $column1, $column2, $type = "", $alias = "") {
