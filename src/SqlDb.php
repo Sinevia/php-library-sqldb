@@ -696,13 +696,13 @@ class SqlDb {
      */
     function join($table_name, $column1, $column2, $type = "", $alias = "") {
         if (is_string($table_name) == false) {
-            throw new RuntimeException('In class ' . get_class($this) . ' in method join($table_name,$column1,$column2): $table_name parameter MUST BE of type string');
+            throw new \RuntimeException('In class ' . get_class($this) . ' in method join($table_name,$column1,$column2): $table_name parameter MUST BE of type string');
         }
         if (is_string($column1) == false) {
-            throw new RuntimeException('In class ' . get_class($this) . ' in method join($table_name,$column1,$column2): $column1 parameter MUST BE of type string');
+            throw new \RuntimeException('In class ' . get_class($this) . ' in method join($table_name,$column1,$column2): $column1 parameter MUST BE of type string');
         }
         if (is_string($column2) == false) {
-            throw new RuntimeException('In class ' . get_class($this) . ' in method join($table_name,$column1,$column2): $column2 parameter MUST BE of type string');
+            throw new \RuntimeException('In class ' . get_class($this) . ' in method join($table_name,$column1,$column2): $column2 parameter MUST BE of type string');
         }
         if (isset($this->sql["join"]) == false) {
             $this->sql["join"] = array();
