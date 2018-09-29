@@ -985,7 +985,7 @@ class SqlDb {
      */
     function columns($unisex = true) {
         if (isset($this->sql["table"]) == false) {
-            throw new RuntimeException('ERROR: In class <b>' . get_class($this) . '</b> in method <b>columns()</b>: Trying fetch columns from non-specified table!');
+            throw new \RuntimeException('ERROR: In class <b>' . get_class($this) . '</b> in method <b>columns()</b>: Trying fetch columns from non-specified table!');
         }
 
         $current_table = (count($this->sql["table"]) - 1);
