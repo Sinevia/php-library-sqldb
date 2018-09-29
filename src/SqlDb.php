@@ -1458,8 +1458,8 @@ class SqlDb {
 
     /**
      * Converts wheres to SQL
-     * @param type $wheres
-     * @return type
+     * @param array $wheres
+     * @return string
      */
     private function where_to_sql($wheres) {
         $sql = array();
