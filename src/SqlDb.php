@@ -196,7 +196,7 @@ class SqlDb {
      * @param String the name of the column
      * @param String the type of the column (STRING, INTEGER, FLOAT, TEXT, BLOB)
      * @param String the attributes of the column (NOT NULL PRIMARY KEY AUTO_INCREMENT)
-     * @return an instance of this database
+     * @return SqlDb an instance of this database
      * @access public
      */
     function column($column_name, $column_type = null, $column_properties = null) {
