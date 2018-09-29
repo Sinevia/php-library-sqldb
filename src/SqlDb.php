@@ -1218,13 +1218,14 @@ class SqlDb {
         }
         $table_name = $this->sql["table"][0];
 
-        if (isset($this->sql["table"]) == false)
+        if (isset($this->sql["table"]) == false) {
             trigger_error('ERROR: In class <b>' . get_class($this) . '</b> in method <b>select()</b>: Not specified table to select from!', E_USER_ERROR);
+        }
         $table_name = $this->sql["table"][0];
         $where = isset($this->sql["where"]) == false ? '' : $this->where_to_sql($this->sql["where"]);
         $orderby = isset($this->sql["orderby"]) == false ? '' : $this->orderby_to_sql($this->sql["orderby"]);
         $limit = (isset($this->sql["limit"]) == false) ? '' : " LIMIT " . $this->sql["limit"];
-        $join = isset($this->sql["join"]) == false ? '' : $this->join_to_sql($this->sql["join"], $table_name);
+        //$join = isset($this->sql["join"]) == false ? '' : $this->join_to_sql($this->sql["join"], $table_name);
 
         foreach ($row_values as $key => $value) {
             $row_values[$key] = $this->dbh->quote($value);
