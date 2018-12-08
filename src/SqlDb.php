@@ -315,6 +315,8 @@ class SqlDb {
         if ($this->debug) {
             $this->debug(' - Executing SQL:"' . $sql . '"');
         }
+        
+        $this->sqlLog[] = $sql;
 
         if ($this->database_type == 'sqlitedb') {
             try {
@@ -331,7 +333,6 @@ class SqlDb {
         } else {
 
             try {
-                $this->sqlLog[] = $sql;
                 foreach ($this->dbh->query($sql, $return_type) as $row) {
                     $result[] = $row;
                 }
