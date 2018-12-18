@@ -51,8 +51,8 @@ $db = new Sinevia\SqlDB(array(
     'database_pass'=>'db_pass'
 ));
 
-// Creating a new SQLite Database
-$sqlitedb = new Sinevia\SqlDB(array(
+// SQLite (creating a new SQLite database, if it does not exist)
+$db = new Sinevia\SqlDB(array(
     'database_type'=>'sqlite',
     'database_name'=>'db_name',
     'database_host'=>'db_host',
