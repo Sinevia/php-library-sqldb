@@ -3,7 +3,7 @@
 // ========================================================================= //
 // SINEVIA PUBLIC                                        http://sinevia.com  //
 // ------------------------------------------------------------------------- //
-// COPYRIGHT (c) 2008-2018 Sinevia Ltd                   All rights reserved //
+// COPYRIGHT (c) 2008-2019 Sinevia Ltd                   All rights reserved //
 // ------------------------------------------------------------------------- //
 // LICENCE: All information contained herein is, and remains, property of    //
 // Sinevia Ltd at all times.  Any intellectual and technical concepts        //
@@ -158,8 +158,6 @@ class SqlDb {
         if ($this->database_type == 'mysql') {
             $this->dsn = 'mysql:dbname=' . $this->database_name . ';host=' . $this->database_host;
         }
-
-        var_dump($this->dsn);
 
         // If no DSN and no auto DSN created
         if ($this->dsn == '') {
