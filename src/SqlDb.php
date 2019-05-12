@@ -140,7 +140,7 @@ class SqlDb {
 
         if ($this->database_type == 'sqlite') {
             $database_host = '';
-            if ($this->database_host != '') {
+            if ($this->database_host != '' AND $this->database_host != ':memory:') {
                 $database_host = str_replace("\\", DIRECTORY_SEPARATOR, str_replace("/", DIRECTORY_SEPARATOR, $this->database_host));
                 // Add final backslash
                 if (substr($database_host, -1, 1) != DIRECTORY_SEPARATOR) {
@@ -158,6 +158,8 @@ class SqlDb {
         if ($this->database_type == 'mysql') {
             $this->dsn = 'mysql:dbname=' . $this->database_name . ';host=' . $this->database_host;
         }
+
+        var_dump($this->dsn);
 
         // If no DSN and no auto DSN created
         if ($this->dsn == '') {
@@ -315,7 +317,7 @@ class SqlDb {
         if ($this->debug) {
             $this->debug(' - Executing SQL:"' . $sql . '"');
         }
-        
+
         $this->sqlLog[] = $sql;
 
         if ($this->database_type == 'sqlitedb') {
@@ -1436,7 +1438,7 @@ class SqlDb {
 
         return $sql;
     }
-    
+
     private function whereToSqlSingle($column, $operator, $value) {
         if ($this->database_type == 'mysql') {
             $column = explode('.', $column);
@@ -1554,7 +1556,7 @@ class SqlDb {
                     }
                 }
             }
-            
+
             //return (count($sql)>0)? " WHERE ".implode(" AND ",$sql):"";
             return (count($sql) > 0) ? " WHERE " . implode(" ", $sql) : "";
         }
