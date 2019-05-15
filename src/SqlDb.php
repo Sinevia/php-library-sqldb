@@ -147,8 +147,13 @@ class SqlDb {
                     $database_host = $database_host . DIRECTORY_SEPARATOR;
                 }
             }
-            $database_path = $database_host . $this->database_name;
-            $this->dsn = 'sqlite:' . $database_path;
+            if ($this->database_host == ':memory:') {
+                $this->dsn = 'sqlite::memory:';
+            }else{
+                $database_path = $database_host . $this->database_name;
+                $this->dsn = 'sqlite:' . $database_path;
+            }
+            
         }
 
         if ($this->database_type == 'sqlitedb') {
