@@ -1,6 +1,6 @@
 {
     "name": "sinevia/php-library-sqldb",
-    "description": "PHP Library Utils",
+    "description": "PHP Library for Working with SQL databases",
     "type": "library",
     "keywords": ["sqldb", "library", "php", "sinevia"],    
     "homepage": "http://github.com/sinevia/php-library-sqldb",
@@ -14,7 +14,7 @@
         }
     ],
     "require": {
-        "sinevia/php-library-http": "1.3.0"
+        "sinevia/php-library-http": "v1.3.0"
     },
     "autoload": {
         "files": [

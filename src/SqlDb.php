@@ -3,7 +3,7 @@
 // ========================================================================= //
 // SINEVIA PUBLIC                                        http://sinevia.com  //
 // ------------------------------------------------------------------------- //
-// COPYRIGHT (c) 2008-2018 Sinevia Ltd                   All rights reserved //
+// COPYRIGHT (c) 2008-2019 Sinevia Ltd                   All rights reserved //
 // ------------------------------------------------------------------------- //
 // LICENCE: All information contained herein is, and remains, property of    //
 // Sinevia Ltd at all times.  Any intellectual and technical concepts        //
@@ -140,7 +140,7 @@ class SqlDb {
 
         if ($this->database_type == 'sqlite') {
             $database_host = '';
-            if ($this->database_host != '') {
+            if ($this->database_host != '' AND $this->database_host != ':memory:') {
                 $database_host = str_replace("\\", DIRECTORY_SEPARATOR, str_replace("/", DIRECTORY_SEPARATOR, $this->database_host));
                 // Add final backslash
                 if (substr($database_host, -1, 1) != DIRECTORY_SEPARATOR) {
@@ -315,7 +315,7 @@ class SqlDb {
         if ($this->debug) {
             $this->debug(' - Executing SQL:"' . $sql . '"');
         }
-        
+
         $this->sqlLog[] = $sql;
 
         if ($this->database_type == 'sqlitedb') {
@@ -636,7 +636,7 @@ class SqlDb {
 
     /**
      * Groups by a column name
-     * @param type $column_name
+     * @param SqlDb $column_name
      * @return $this
      */
     function groupBy($column_name) {
@@ -692,18 +692,18 @@ class SqlDb {
     /**
      * Joins two tables
      * @param String the name of the table
-     * @return Object an instance of this database
+     * @return SqlDb an instance of this database
      * @access public
      */
     function join($table_name, $column1, $column2, $type = "", $alias = "") {
         if (is_string($table_name) == false) {
-            throw new RuntimeException('In class ' . get_class($this) . ' in method join($table_name,$column1,$column2): $table_name parameter MUST BE of type string');
+            throw new \RuntimeException('In class ' . get_class($this) . ' in method join($table_name,$column1,$column2): $table_name parameter MUST BE of type string');
         }
         if (is_string($column1) == false) {
-            throw new RuntimeException('In class ' . get_class($this) . ' in method join($table_name,$column1,$column2): $column1 parameter MUST BE of type string');
+            throw new \RuntimeException('In class ' . get_class($this) . ' in method join($table_name,$column1,$column2): $column1 parameter MUST BE of type string');
         }
         if (is_string($column2) == false) {
-            throw new RuntimeException('In class ' . get_class($this) . ' in method join($table_name,$column1,$column2): $column2 parameter MUST BE of type string');
+            throw new \RuntimeException('In class ' . get_class($this) . ' in method join($table_name,$column1,$column2): $column2 parameter MUST BE of type string');
         }
         if (isset($this->sql["join"]) == false) {
             $this->sql["join"] = array();
@@ -956,7 +956,7 @@ class SqlDb {
      */
     function selectColumn($columnName) {
         $results = $this->select([$columnName]);
-        return array_column($result, $columnName);
+        return array_column($results, $columnName);
     }
 
     /**
@@ -986,7 +986,7 @@ class SqlDb {
      */
     function columns($unisex = true) {
         if (isset($this->sql["table"]) == false) {
-            throw new RuntimeException('ERROR: In class <b>' . get_class($this) . '</b> in method <b>columns()</b>: Trying fetch columns from non-specified table!');
+            throw new \RuntimeException('ERROR: In class <b>' . get_class($this) . '</b> in method <b>columns()</b>: Trying fetch columns from non-specified table!');
         }
 
         $current_table = (count($this->sql["table"]) - 1);
@@ -1219,13 +1219,14 @@ class SqlDb {
         }
         $table_name = $this->sql["table"][0];
 
-        if (isset($this->sql["table"]) == false)
+        if (isset($this->sql["table"]) == false) {
             trigger_error('ERROR: In class <b>' . get_class($this) . '</b> in method <b>select()</b>: Not specified table to select from!', E_USER_ERROR);
+        }
         $table_name = $this->sql["table"][0];
         $where = isset($this->sql["where"]) == false ? '' : $this->where_to_sql($this->sql["where"]);
         $orderby = isset($this->sql["orderby"]) == false ? '' : $this->orderby_to_sql($this->sql["orderby"]);
         $limit = (isset($this->sql["limit"]) == false) ? '' : " LIMIT " . $this->sql["limit"];
-        $join = isset($this->sql["join"]) == false ? '' : $this->join_to_sql($this->sql["join"], $table_name);
+        //$join = isset($this->sql["join"]) == false ? '' : $this->join_to_sql($this->sql["join"], $table_name);
 
         foreach ($row_values as $key => $value) {
             $row_values[$key] = $this->dbh->quote($value);
@@ -1435,7 +1436,7 @@ class SqlDb {
 
         return $sql;
     }
-    
+
     private function whereToSqlSingle($column, $operator, $value) {
         if ($this->database_type == 'mysql') {
             $column = explode('.', $column);
@@ -1459,8 +1460,8 @@ class SqlDb {
 
     /**
      * Converts wheres to SQL
-     * @param type $wheres
-     * @return type
+     * @param array $wheres
+     * @return string
      */
     private function where_to_sql($wheres) {
         $sql = array();
@@ -1553,7 +1554,7 @@ class SqlDb {
                     }
                 }
             }
-            
+
             //return (count($sql)>0)? " WHERE ".implode(" AND ",$sql):"";
             return (count($sql) > 0) ? " WHERE " . implode(" ", $sql) : "";
         }
