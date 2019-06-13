@@ -113,9 +113,9 @@ abstract class ActiveRecord implements IActiveRecord {
 
     public function save() {
         if (count($this->data_changed) == count($this->data)) {
-            $this->insert();
+            return $this->insert();
         } else {
-            $this->update();
+            return $this->update();
         }
     }
 
