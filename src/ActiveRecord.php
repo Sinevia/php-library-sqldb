@@ -69,7 +69,7 @@ abstract class ActiveRecord implements IActiveRecord {
     }
 
     protected function insert() {
-        $db = self::getDatabase();
+        $db = static::getDatabase();
         $db->table($this->getTableName())->insert($this->data_changed);
 
         // If the primary key is Autoincrement field, populate it
@@ -85,7 +85,7 @@ abstract class ActiveRecord implements IActiveRecord {
 
     protected function update() {
         $keys = $this->getKeys();
-        $db = self::getDatabase();
+        $db = static::getDatabase();
         $db = $db->table(self::getTableName());
         for ($i = 0; $i < count($keys); $i++) {
             $db = $db->where($keys[$i], '=', $this->data[$keys[$i]]);
@@ -103,7 +103,7 @@ abstract class ActiveRecord implements IActiveRecord {
      */
     public function delete() {
         $keys = $this->getKeys();
-        $db = self::getDatabase();
+        $db = static::getDatabase();
         $db = $db->table(self::getTableName());
         for ($i = 0; $i < count($keys); $i++) {
             $db = $db->where($keys[$i], '=', $this->data[$keys[$i]]);
