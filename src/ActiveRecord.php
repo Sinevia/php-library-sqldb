@@ -17,35 +17,41 @@ namespace Sinevia;
 
 use \OutOfRangeException;
 
-interface IActiveRecord {
+interface IActiveRecord
+{
 
-    static function getDatabase();
+    public static function getDatabase();
 
     static function getTableName();
 
     static function getKeys();
 }
 
-abstract class ActiveRecord implements IActiveRecord {
+abstract class ActiveRecord implements IActiveRecord
+{
 
-    public static function getKeys() {
+    public static function getKeys()
+    {
         return static::$keys;
     }
 
-    public static function getTableName() {
+    public static function getTableName()
+    {
         return static::$table;
     }
 
-    public static function getDatabase() {
+    public static function getDatabase()
+    {
         return \Application::getDatabase();
     }
-    
+
     /**
      * Finds a record by the specified key(s)
      * @param mixed $key
      * @return ActiveRecord
      */
-    public static function find($key) {
+    public static function find($key)
+    {
         $class_name = get_called_class();
         $o = new $class_name;
         $keys = func_get_args();
@@ -59,16 +65,17 @@ abstract class ActiveRecord implements IActiveRecord {
             $db = $db->where($okeys[$i], '=', $keys[$i]);
         }
         $result = $db->selectOne();
-        
-        if($result===null){
+
+        if ($result === null) {
             return null;
         }
-        
+
         $o->data = $result;
         return $o;
     }
 
-    protected function insert() {
+    protected function insert()
+    {
         $db = static::getDatabase();
         $db->table($this->getTableName())->insert($this->data_changed);
 
@@ -83,7 +90,8 @@ abstract class ActiveRecord implements IActiveRecord {
         return true;
     }
 
-    protected function update() {
+    protected function update()
+    {
         $keys = $this->getKeys();
         $db = static::getDatabase();
         $db = $db->table(static::getTableName());
@@ -101,7 +109,8 @@ abstract class ActiveRecord implements IActiveRecord {
      * Deletes the record
      * @return boolean
      */
-    public function delete() {
+    public function delete()
+    {
         $keys = $this->getKeys();
         $db = static::getDatabase();
         $db = $db->table(static::getTableName());
@@ -111,7 +120,8 @@ abstract class ActiveRecord implements IActiveRecord {
         return $db->delete();
     }
 
-    public function save() {
+    public function save()
+    {
         if (count($this->data_changed) == count($this->data)) {
             return $this->insert();
         } else {
@@ -135,10 +145,11 @@ abstract class ActiveRecord implements IActiveRecord {
      * Gets a property field value. If the property is not defined
      * in the data OutOfRangeException will be thrown.
      * @param $name String the name of the property
-     * @throws InvalidArgumentException if the given parameter is not string 
+     * @throws InvalidArgumentException if the given parameter is not string
      * @throws OutOfRangeException if the parameter is not in the data
      */
-    function get($name) {
+    function get($name)
+    {
         if (is_string($name) == false) {
             throw new InvalidArgumentException("The first parameter in the get method in " . get_class($this) . " MUST be of type String: <b>" . gettype($name) . "</b> given");
         }
@@ -156,7 +167,8 @@ abstract class ActiveRecord implements IActiveRecord {
      * @throws InvalidArgumentException
      * @throws OutOfRangeException
      */
-    public function set($name, $value) {
+    public function set($name, $value)
+    {
         if (is_string($name) == false) {
             throw new InvalidArgumentException("The first parameter in the set method class " . get_class($this) . " MUST be of type String: <b>" . gettype($name) . "</b> given");
         }
