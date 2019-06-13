@@ -74,6 +74,10 @@ abstract class ActiveRecord implements IActiveRecord
         return $o;
     }
 
+    /**
+     * Inserts the record
+     * @return boolean
+     */
     protected function insert()
     {
         $db = static::getDatabase();
@@ -90,6 +94,10 @@ abstract class ActiveRecord implements IActiveRecord
         return true;
     }
 
+    /**
+     * Updates the record
+     * @return boolean
+     */
     protected function update()
     {
         $keys = $this->getKeys();
@@ -120,6 +128,10 @@ abstract class ActiveRecord implements IActiveRecord
         return $db->delete();
     }
 
+    /**
+     * Saves the record
+     * @return boolean
+     */
     public function save()
     {
         if (count($this->data_changed) == count($this->data)) {
