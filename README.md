@@ -2,6 +2,9 @@
 
 PHP Library for working with SQL databases.
 
+
+[![No Dependencies](https://img.shields.io/badge/no-dependencies-success.svg)]
+
 ## Background ##
 - MySQL, SQlite and SQLiteDB (SQLite in the cloud) supported
 - Unified data types. The data types are developer orientated (string, text, integer, float, blob). These are then translated to the correct column type for the corresponding database.
