@@ -3,7 +3,7 @@
 PHP Library for working with SQL databases.
 
 
-[![No Dependencies](https://img.shields.io/badge/no-dependencies-success.svg)]
+![No Dependencies](https://img.shields.io/badge/no-dependencies-success.svg)
 
 ## Background ##
 - MySQL, SQlite and SQLiteDB (SQLite in the cloud) supported
