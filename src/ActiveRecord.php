@@ -3,7 +3,7 @@
 // ========================================================================= //
 // SINEVIA PUBLIC                                        http://sinevia.com  //
 // ------------------------------------------------------------------------- //
-// COPYRIGHT (c) 2008-2018 Sinevia Ltd                   All rights reserved //
+// COPYRIGHT (c) 2008-2019 Sinevia Ltd                   All rights reserved //
 // ------------------------------------------------------------------------- //
 // LICENCE: All information contained herein is, and remains, property of    //
 // Sinevia Ltd at all times.  Any intellectual and technical concepts        //
@@ -119,6 +119,8 @@ abstract class ActiveRecord implements IActiveRecord
      */
     public function delete()
     {
+        $beforeDeleteExists = method_exists($this, 'beforeDelete'));
+        
         $keys = $this->getKeys();
         $db = static::getDatabase();
         $db = $db->table(static::getTableName());
@@ -134,9 +136,24 @@ abstract class ActiveRecord implements IActiveRecord
      */
     public function save()
     {
+        $beforeSaveExists = method_exists($this, 'beforeSave'));
+        $beforeInsertExists = method_exists($this, 'beforeInsert'));
+        $beforeUpdateExists = method_exists($this, 'beforeUpdate'));
+        
+        if ($beforeSaveExists){
+            
+        }
+            
+        
         if (count($this->data_changed) == count($this->data)) {
+            if ($beforeInsertExists) {
+                
+            }
             return $this->insert();
         } else {
+            if ($beforeUpdateExists) {
+                
+            }
             return $this->update();
         }
     }
