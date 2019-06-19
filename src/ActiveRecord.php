@@ -119,7 +119,11 @@ abstract class ActiveRecord implements IActiveRecord
      */
     public function delete()
     {
-        $beforeDeleteExists = method_exists($this, 'beforeDelete'));
+        $beforeDeleteExists = method_exists($this, 'beforeDelete');
+
+        if ($beforeDeleteExists){
+            call_user_func([$this,'beforeDelete']);
+        }
         
         $keys = $this->getKeys();
         $db = static::getDatabase();
@@ -136,24 +140,25 @@ abstract class ActiveRecord implements IActiveRecord
      */
     public function save()
     {
-        $beforeSaveExists = method_exists($this, 'beforeSave'));
-        $beforeInsertExists = method_exists($this, 'beforeInsert'));
-        $beforeUpdateExists = method_exists($this, 'beforeUpdate'));
+        $beforeSaveExists = method_exists($this, 'beforeSave');
+        $beforeInsertExists = method_exists($this, 'beforeInsert');
+        $beforeUpdateExists = method_exists($this, 'beforeUpdate');
         
         if ($beforeSaveExists){
-            
-        }
-            
+            call_user_func([$this,'beforeSave']);
+        }   
         
         if (count($this->data_changed) == count($this->data)) {
             if ($beforeInsertExists) {
-                
+                call_user_func([$this,'beforeInsert']);
             }
+            
             return $this->insert();
         } else {
             if ($beforeUpdateExists) {
-                
+                call_user_func([$this,'beforeUpdate']);
             }
+            
             return $this->update();
         }
     }
