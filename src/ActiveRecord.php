@@ -78,6 +78,7 @@ abstract class ActiveRecord implements IActiveRecord
      * Refreshes the instance data from the database
      */
     public function refresh(){
+        $db = static::getDatabase();
         $db = $db->table(static::getTableName());
         for ($i = 0; $i < count($keys); $i++) {
             $db = $db->where($keys[$i], '=', $this->data[$keys[$i]]);
