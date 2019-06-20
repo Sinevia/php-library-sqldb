@@ -73,6 +73,24 @@ abstract class ActiveRecord implements IActiveRecord
         $o->data = $result;
         return $o;
     }
+    
+    /**
+     * Refreshes the instance data from the database
+     */
+    public function refresh(){
+        $db = $db->table(static::getTableName());
+        for ($i = 0; $i < count($keys); $i++) {
+            $db = $db->where($keys[$i], '=', $this->data[$keys[$i]]);
+        }
+        $result = $db->selectOne();
+        
+        if ($result !== null) {
+            $this->data = $result;
+            return true;
+        }
+        
+        return false;
+    }
 
     /**
      * Inserts the record
@@ -91,6 +109,10 @@ abstract class ActiveRecord implements IActiveRecord
             $this->data[$primary_key] = $primary_key_value;
         }
         $this->data_changed = array();
+        
+        // Reselect to pull any data (and columns) defaulted in the database
+        $this->refresh();
+        
         return true;
     }
 
@@ -183,7 +205,7 @@ abstract class ActiveRecord implements IActiveRecord
      * @throws InvalidArgumentException if the given parameter is not string
      * @throws OutOfRangeException if the parameter is not in the data
      */
-    function get($name, $default=false)
+    function get($name)
     {
         if (is_string($name) == false) {
             throw new InvalidArgumentException("The first parameter in the get method in " . get_class($this) . " MUST be of type String: <b>" . gettype($name) . "</b> given");
@@ -192,9 +214,6 @@ abstract class ActiveRecord implements IActiveRecord
         if (array_key_exists($name, $this->data)) {
             return $this->data[$name];
         } else {
-            if ($default !== false) {
-                return $default;
-            }
             throw new OutOfRangeException("There is no $name field in " . get_class($this) . "!");
         }
     }
