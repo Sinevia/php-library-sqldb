@@ -179,10 +179,11 @@ abstract class ActiveRecord implements IActiveRecord
      * Gets a property field value. If the property is not defined
      * in the data OutOfRangeException will be thrown.
      * @param $name String the name of the property
+     * @param mixed $defaut the defaut value to be returned, if no vaue exists
      * @throws InvalidArgumentException if the given parameter is not string
      * @throws OutOfRangeException if the parameter is not in the data
      */
-    function get($name)
+    function get($name, $default=false)
     {
         if (is_string($name) == false) {
             throw new InvalidArgumentException("The first parameter in the get method in " . get_class($this) . " MUST be of type String: <b>" . gettype($name) . "</b> given");
@@ -191,6 +192,9 @@ abstract class ActiveRecord implements IActiveRecord
         if (array_key_exists($name, $this->data)) {
             return $this->data[$name];
         } else {
+            if ($default !== false) {
+                return $default;
+            }
             throw new OutOfRangeException("There is no $name field in " . get_class($this) . "!");
         }
     }
