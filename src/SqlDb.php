@@ -1347,6 +1347,11 @@ class SqlDb {
                 if ($column_properties != '') {
                     $column_properties = str_ireplace('AUTOINCREMENT', 'AUTO_INCREMENT', $column_properties);
                     $sql_column .= " " . $column_properties;
+                    
+                    // primary key
+                    $column_properties = str_ireplace('PRIMARY KEY', 'PRIMARY', $column_properties);
+                    $column_properties = str_ireplace('PRIMARYKEY', 'PRIMARY', $column_properties);
+                    $column_properties = str_ireplace('PRIMARY', 'PRIMARY KEY', $column_properties);
                 }
                 // 				$sql_column = "`".$column['column_name']."`";
                 // 				if(strtolower(trim($column['column_type']))=="integer"){ $sql_column .= " BIGINT"; }
@@ -1391,6 +1396,12 @@ class SqlDb {
                     // No AUTOINCREMENT field in SQLite
                     $column_properties = str_ireplace('AUTO_INCREMENT', '', $column_properties);
                     $column_properties = str_ireplace('AUTOINCREMENT', '', $column_properties);
+                    
+                    // Primary key
+                    $column_properties = str_ireplace('PRIMARY KEY', 'PRIMARY', $column_properties);
+                    $column_properties = str_ireplace('PRIMARYKEY', 'PRIMARY', $column_properties);
+                    $column_properties = str_ireplace('PRIMARY', 'PRIMARY KEY', $column_properties);
+                    
                     $sql_column .= " " . $column_properties;
                 }
                 $sql_columns[] = $sql_column;
