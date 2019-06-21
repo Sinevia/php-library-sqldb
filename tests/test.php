@@ -91,7 +91,7 @@ $tf->test("Testing Creating Tables", function ($tf) {
 $tf->test("Testing Inserting Rows", function ($tf) {
     //db()->debug = true;
 
-    $result = table()->insert(['FirstName' => 'John', 'LastName' => 'Doe']);
+    $result = tableSqlite()->insert(['FirstName' => 'John', 'LastName' => 'Doe']);
 
     $lastestSql = array_pop(dbSqlite()->sqlLog);
 
@@ -104,7 +104,7 @@ $tf->test("Testing Inserting Rows", function ($tf) {
 $tf->test("Testing Deleting Rows", function ($tf) {
     //db()->debug = true;
 
-    $id = table()->nextId('Id');
+    $id = tableSqite()->nextId('Id');
 
     $result = tableSqlite()->insert(['Id' => $id, 'FirstName' => 'John', 'LastName' => 'Doe']);
 
