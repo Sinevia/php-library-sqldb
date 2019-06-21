@@ -2,7 +2,7 @@
 
 $tf->test("MySQL. Testing Creating Tables", function ($tf) {
     //db()->debug = true;
-    $result = dbSMysl()->table('test_creating_tables')
+    $result = dbMysql()->table('test_creating_tables')
         ->column('Id', 'INTEGER', 'PRIMARY AUTO_INCREMENT')
         ->create();
     $lastestSql = array_pop(dbSMysl()->sqlLog);
@@ -14,7 +14,7 @@ $tf->test("MySQL. Testing Creating Tables", function ($tf) {
 $tf->test("MySQL. Testing Inserting Rows", function ($tf) {
     //db()->debug = true;
     $result = tableMysql()->insert(['FirstName' => 'John', 'LastName' => 'Doe']);
-    $lastestSql = array_pop(dbSMysl()->sqlLog);
+    $lastestSql = array_pop(dbMysql()->sqlLog);
     var_dump($lastestSql);
     $tf->assertTrue($result);
     $tf->assertEquals($lastestSql, "INSERT INTO 'tests'('FirstName','LastName') VALUES ('John','Doe')");
@@ -26,7 +26,7 @@ $tf->test("MySQL. Testing Deleting Rows", function ($tf) {
     $result = tableMysql()->insert(['Id' => $id, 'FirstName' => 'John', 'LastName' => 'Doe']);
     $tf->assertTrue($result);
     $result = tableMysql()->where('Id', '=', $id)->delete();
-    $lastestSql = array_pop(dbSMysl()->sqlLog);
+    $lastestSql = array_pop(dbMysql()->sqlLog);
     var_dump($lastestSql);
     $tf->assertTrue($result);
     $tf->assertEquals($lastestSql, "DELETE FROM 'tests' WHERE Id = '$id';");
@@ -78,6 +78,6 @@ $tf->test("MySQL. Testing WHERE clauses", function ($tf) {
     $tf->assertEquals(count($result), 1);
     $result = tableMysql()->where('FirstName', '=', 'Ben')->where('FirstName', '=', 'Sean', 'OR')->select();
     $tf->assertEquals(count($result), 2);
-    $lastestSql = array_pop(dbSqlite()->sqlLog);
+    $lastestSql = array_pop(dbMysql()->sqlLog);
     $tf->assertEquals($lastestSql, "SELECT * FROM 'tests' WHERE FirstName = 'Ben' OR FirstName = 'Sean';");
 });
