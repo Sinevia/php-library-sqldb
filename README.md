@@ -92,7 +92,7 @@ $db->drop();
 if ($db->table("person")->exists() == false) {
     // Create table
     $db->table("person")
-        ->column("Id", "INTEGER", "NOT NULL PRIMARY KEY")
+        ->column("Id", "INTEGER", "NOT NULL PRIMARY KEY AUTO_INCREMENT")
         ->column("FirstName", "STRING")
         ->column("LastName", "STRING")
         ->create();
