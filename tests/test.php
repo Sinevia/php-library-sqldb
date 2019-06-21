@@ -10,7 +10,7 @@ $tf = new \Testify\Testify("SqlDb Test Suite");
 $tf->beforeEach(function ($tf) {
     tableSqlite()->drop();
 
-    tableSqlite()->column('Id', 'INTEGER', 'PRIMARY AUTOINCREMENT')
+    tableSqlite()->column('Id', 'INTEGER', 'AUTOINCREMENT')
         ->column('FirstName', 'STRING')
         ->column('MiddleNames', 'STRING')
         ->column('LastName', 'STRING')
@@ -19,7 +19,7 @@ $tf->beforeEach(function ($tf) {
     
     tableMySql()->drop();
 
-    tableMySql()->column('Id', 'INTEGER', 'PRIMARY AUTOINCREMENT')
+    tableMySql()->column('Id', 'INTEGER', 'AUTOINCREMENT')
         ->column('FirstName', 'STRING')
         ->column('MiddleNames', 'STRING')
         ->column('LastName', 'STRING')
