@@ -1,8 +1,7 @@
 <?php
-dbMysql()->debug = true;
 
 $tf->test("MySQL. Testing Creating Tables", function ($tf) {
-    //db()->debug = true;
+    //dbMysql()->debug = true;
     $result = dbMysql()->table('test_creating_tables')
         ->column('Id', 'INTEGER', 'PRIMARY AUTO_INCREMENT')
         ->create();
@@ -16,13 +15,13 @@ $tf->test("MySQL. Testing Creating Tables", function ($tf) {
 });
 
 $tf->test("MySQL. Testing Test Table Exists", function ($tf) {
-    //db()->debug = true;
+    //dbMysql()->debug = true;
     $result = tableMysql()->exists();
     $tf->assertTrue($result);
 });
 
 $tf->test("MySQL. Testing Inserting Rows", function ($tf) {
-    //db()->debug = true;
+    //dbMysql()->debug = true;
     $result = tableMysql()->insert(['FirstName' => 'John', 'LastName' => 'Doe']);
     $lastestSql = array_pop(dbMysql()->sqlLog);
     //var_dump($lastestSql);
@@ -31,18 +30,18 @@ $tf->test("MySQL. Testing Inserting Rows", function ($tf) {
 });
 
 $tf->test("MySQL. Testing Deleting Rows", function ($tf) {
-    //db()->debug = true;
+    //dbMysql()->debug = true;
     $id = tableMysql()->nextId('Id');
     $result = tableMysql()->insert(['Id' => $id, 'FirstName' => 'John', 'LastName' => 'Doe']);
     $tf->assertTrue($result);
     $result = tableMysql()->where('Id', '=', $id)->delete();
     $lastestSql = array_pop(dbMysql()->sqlLog);
-    var_dump($lastestSql);
+    // var_dump($lastestSql);
     $tf->assertTrue($result);
     $tf->assertEquals($lastestSql, "DELETE FROM `tests` WHERE `Id` = '$id';");
 });
 
-$tf->test("Sqlite. Testing nextId", function ($tf) {
+$tf->test("MySQL. Testing nextId", function ($tf) {
     //db()->debug = true;
     $id = tableMysql()->nextId('Id');
     $result = tableMysql()->insert(['Id' => $id, 'FirstName' => 'John', 'LastName' => 'Doe']);
@@ -62,7 +61,7 @@ $tf->test("MySQL. Testing lastInsertId", function ($tf) {
     //db()->debug = true;
     $result = tableMysql()->insert(['FirstName' => 'John', 'LastName' => 'Doe']);
     $tf->assertTrue($result);
-    $id = tableSqlite()->lastInsertId('Id');
+    $id = tableMysql()->lastInsertId('Id');
     $tf->assertEquals($id, 1);
     $result = tableMysql()->insert(['FirstName' => 'John', 'LastName' => 'Doe']);
     $tf->assertTrue($result);
