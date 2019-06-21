@@ -5,7 +5,7 @@ $tf->test("MySQL. Testing Creating Tables", function ($tf) {
     $result = dbMysql()->table('test_creating_tables')
         ->column('Id', 'INTEGER', 'PRIMARY AUTO_INCREMENT')
         ->create();
-    $lastestSql = array_pop(dbSMysl()->sqlLog);
+    $lastestSql = array_pop(dbMysql()->sqlLog);
     var_dump($lastestSql);
     $tf->assertTrue($result);
     $tf->assertEquals($lastestSql, "CREATE TABLE 'test_creating_tables'(Id INTEGER);");
