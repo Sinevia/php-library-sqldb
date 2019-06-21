@@ -71,6 +71,15 @@ $tf->beforeEach(function ($tf) {
         ->column('LastName', 'STRING')
         ->column('Birthday', 'DATETIME', 'DEFAULT NULL')
         ->create();
+    
+    tableMySql()->drop();
+
+    tableMySql()->column('Id', 'INTEGER', 'PRIMARY AUTOINCREMENT')
+        ->column('FirstName', 'STRING')
+        ->column('MiddleNames', 'STRING')
+        ->column('LastName', 'STRING')
+        ->column('Birthday', 'DATETIME', 'DEFAULT NULL')
+        ->create();
 });
 
 $tf->test("Testing Creating Tables", function ($tf) {
