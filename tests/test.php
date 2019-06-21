@@ -104,7 +104,7 @@ $tf->test("Testing Inserting Rows", function ($tf) {
 $tf->test("Testing Deleting Rows", function ($tf) {
     //db()->debug = true;
 
-    $id = tableSqite()->nextId('Id');
+    $id = tableSqlite()->nextId('Id');
 
     $result = tableSqlite()->insert(['Id' => $id, 'FirstName' => 'John', 'LastName' => 'Doe']);
 
