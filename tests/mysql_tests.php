@@ -13,7 +13,7 @@ $tf->test("MySQL. Testing Creating Tables", function ($tf) {
 
 $tf->test("MySQL. Testing Test Table Exists", function ($tf) {
     //db()->debug = true;
-    $result = tableMysql()->exists());
+    $result = tableMysql()->exists();
     $tf->assertTrue($result);
 });
 
