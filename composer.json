@@ -21,5 +21,8 @@
             "src/SqlDb.php",
             "src/ActiveRecord.php"
         ]
+    },
+    "require-dev": {
+        "bafs/testify": "^1.0"
     }
 }
