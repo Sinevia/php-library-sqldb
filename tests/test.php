@@ -8,7 +8,26 @@ require dirname(__DIR__) . '/vendor/autoload.php';
  * Returns a database instance
  * @return \Sinevia\SqlDb
  */
-function db()
+function dbSqlite()
+{
+    static $db = null;
+    if (is_null($db)) {
+        $db = new \Sinevia\SqlDb(array(
+            'database_type' => 'sqlite',
+            'database_host' => ":memory:",
+            'database_name' => ":memory:",
+            'database_user' => "test",
+            'database_pass' => "",
+        ));
+    }
+    return $db;
+}
+
+/**
+ * Returns a database instance
+ * @return \Sinevia\SqlDb
+ */
+function dbMySql()
 {
     static $db = null;
     if (is_null($db)) {
@@ -27,17 +46,26 @@ function db()
  * Returns a table instance
  * @return \Sinevia\SqlDb
  */
-function table()
+function tableSqlite()
 {
-    return db()->table('tests');
+    return dbSqlite()->table('tests');
+}
+
+/**
+ * Returns a table instance
+ * @return \Sinevia\SqlDb
+ */
+function tableMySql()
+{
+    return dbMySql()->table('tests');
 }
 
 $tf = new \Testify\Testify("SqlDb Test Suite");
 
 $tf->beforeEach(function ($tf) {
-    table()->drop();
+    tableSqlite()->drop();
 
-    table()->column('Id', 'INTEGER', 'PRIMARY AUTOINCREMENT')
+    tableSqlite()->column('Id', 'INTEGER', 'PRIMARY AUTOINCREMENT')
         ->column('FirstName', 'STRING')
         ->column('MiddleNames', 'STRING')
         ->column('LastName', 'STRING')
@@ -48,11 +76,11 @@ $tf->beforeEach(function ($tf) {
 $tf->test("Testing Creating Tables", function ($tf) {
     //db()->debug = true;
 
-    $result = db()->table('test_creating_tables')
+    $result = dbSqlite()->table('test_creating_tables')
         ->column('Id', 'INTEGER', 'PRIMARY AUTO_INCREMENT')
         ->create();
 
-    $lastestSql = array_pop(db()->sqlLog);
+    $lastestSql = array_pop(dbSqlite()->sqlLog);
 
     // var_dump($lastestSql);
 
@@ -65,7 +93,7 @@ $tf->test("Testing Inserting Rows", function ($tf) {
 
     $result = table()->insert(['FirstName' => 'John', 'LastName' => 'Doe']);
 
-    $lastestSql = array_pop(db()->sqlLog);
+    $lastestSql = array_pop(dbSqlite()->sqlLog);
 
     // var_dump($lastestSql);
 
@@ -78,13 +106,13 @@ $tf->test("Testing Deleting Rows", function ($tf) {
 
     $id = table()->nextId('Id');
 
-    $result = table()->insert(['Id' => $id, 'FirstName' => 'John', 'LastName' => 'Doe']);
+    $result = tableSqlite()->insert(['Id' => $id, 'FirstName' => 'John', 'LastName' => 'Doe']);
 
     $tf->assertTrue($result);
 
-    $result = table()->where('Id', '=', $id)->delete();
+    $result = tableSqlite()->where('Id', '=', $id)->delete();
 
-    $lastestSql = array_pop(db()->sqlLog);
+    $lastestSql = array_pop(dbSqlite()->sqlLog);
 
     // var_dump($lastestSql);
 
@@ -95,18 +123,18 @@ $tf->test("Testing Deleting Rows", function ($tf) {
 $tf->test("Testing nextId", function ($tf) {
     //db()->debug = true;
 
-    $id = table()->nextId('Id');
-    $result = table()->insert(['Id' => $id, 'FirstName' => 'John', 'LastName' => 'Doe']);
+    $id = tableSqlite()->nextId('Id');
+    $result = tableSqlite()->insert(['Id' => $id, 'FirstName' => 'John', 'LastName' => 'Doe']);
     $tf->assertTrue($result);
     $tf->assertEquals($id, 1);
 
-    $id = table()->nextId('Id');
-    $result = table()->insert(['Id' => $id, 'FirstName' => 'John', 'LastName' => 'Doe']);
+    $id = tableSqlite()->nextId('Id');
+    $result = tableSqlite()->insert(['Id' => $id, 'FirstName' => 'John', 'LastName' => 'Doe']);
     $tf->assertTrue($result);
     $tf->assertEquals($id, 2);
 
-    $id = table()->nextId('Id');
-    $result = table()->insert(['Id' => $id, 'FirstName' => 'John', 'LastName' => 'Doe']);
+    $id = tableSqlite()->nextId('Id');
+    $result = tableSqlite()->insert(['Id' => $id, 'FirstName' => 'John', 'LastName' => 'Doe']);
     $tf->assertTrue($result);
     $tf->assertEquals($id, 3);
 });
@@ -114,44 +142,44 @@ $tf->test("Testing nextId", function ($tf) {
 $tf->test("Testing lastInsertId", function ($tf) {
     //db()->debug = true;
 
-    $result = table()->insert(['FirstName' => 'John', 'LastName' => 'Doe']);
+    $result = tableSqlite()->insert(['FirstName' => 'John', 'LastName' => 'Doe']);
     $tf->assertTrue($result);
-    $id = table()->lastInsertId('Id');
+    $id = tableSqlite()->lastInsertId('Id');
     $tf->assertEquals($id, 1);
 
-    $result = table()->insert(['FirstName' => 'John', 'LastName' => 'Doe']);
+    $result = tableSqlite()->insert(['FirstName' => 'John', 'LastName' => 'Doe']);
     $tf->assertTrue($result);
-    $id = table()->lastInsertId('Id');
+    $id = tableSqlite()->lastInsertId('Id');
     $tf->assertEquals($id, 2);
 
-    $result = table()->insert(['FirstName' => 'John', 'LastName' => 'Doe']);
+    $result = tableSqlite()->insert(['FirstName' => 'John', 'LastName' => 'Doe']);
     $tf->assertTrue($result);
-    $id = table()->lastInsertId('Id');
+    $id = tableSqlite()->lastInsertId('Id');
     $tf->assertEquals($id, 3);
 });
 
 $tf->test("Testing WHERE clauses", function ($tf) {
     //db()->debug = true;
 
-    $result = table()->insert(['FirstName' => 'John', 'LastName' => 'Doe']);
+    $result = tableSqlite()->insert(['FirstName' => 'John', 'LastName' => 'Doe']);
     $tf->assertTrue($result);
 
-    $result = table()->insert(['FirstName' => 'Ben', 'LastName' => 'Smith']);
+    $result = tableSqlite()->insert(['FirstName' => 'Ben', 'LastName' => 'Smith']);
     $tf->assertTrue($result);
 
-    $result = table()->insert(['FirstName' => 'Tom', 'LastName' => 'Johnson']);
+    $result = tableSqlite()->insert(['FirstName' => 'Tom', 'LastName' => 'Johnson']);
     $tf->assertTrue($result);
 
-    $result = table()->insert(['FirstName' => 'Sean', 'LastName' => 'Farah']);
+    $result = tableSqlite()->insert(['FirstName' => 'Sean', 'LastName' => 'Farah']);
     $tf->assertTrue($result);
 
-    $result = table()->where('FirstName', '=', 'Tom')->select();
+    $result = tableSqlite()->where('FirstName', '=', 'Tom')->select();
     $tf->assertEquals(count($result), 1);
 
-    $result = table()->where('FirstName', '=', 'Ben')->where('FirstName', '=', 'Sean', 'OR')->select();
+    $result = tableSqlite()->where('FirstName', '=', 'Ben')->where('FirstName', '=', 'Sean', 'OR')->select();
     $tf->assertEquals(count($result), 2);
 
-    $lastestSql = array_pop(db()->sqlLog);
+    $lastestSql = array_pop(dbSqlite()->sqlLog);
 
     $tf->assertEquals($lastestSql, "SELECT * FROM 'tests' WHERE FirstName = 'Ben' OR FirstName = 'Sean';");
 });
