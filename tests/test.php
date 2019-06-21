@@ -138,4 +138,7 @@ $tf->test("Testing WHERE clauses", function ($tf) {
     $tf->assertEquals($lastestSql, "SELECT * FROM 'tests' WHERE FirstName = 'Ben' OR FirstName = 'Sean';");
 });
 
+require __DIR__ . '/mysql_tests.php';
+require __DIR__ . '/sqlite_tests.php';
+
 $tf();
