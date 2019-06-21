@@ -6,18 +6,18 @@ $tf->test("MySQL. Testing Creating Tables", function ($tf) {
         ->column('Id', 'INTEGER', 'PRIMARY AUTO_INCREMENT')
         ->create();
     $lastestSql = array_pop(dbMysql()->sqlLog);
-    var_dump($lastestSql);
+    //var_dump($lastestSql);
     $tf->assertTrue($result);
-    $tf->assertEquals($lastestSql, "CREATE TABLE 'test_creating_tables'(Id INTEGER);");
+    $tf->assertEquals($lastestSql, "CREATE TABLE `test_creating_tables`(`Id` BIGINT PRIMARY AUTO_INCREMENT);");
 });
 
 $tf->test("MySQL. Testing Inserting Rows", function ($tf) {
     //db()->debug = true;
     $result = tableMysql()->insert(['FirstName' => 'John', 'LastName' => 'Doe']);
     $lastestSql = array_pop(dbMysql()->sqlLog);
-    var_dump($lastestSql);
+    //var_dump($lastestSql);
     $tf->assertTrue($result);
-    $tf->assertEquals($lastestSql, "INSERT INTO 'tests'('FirstName','LastName') VALUES ('John','Doe')");
+    $tf->assertEquals($lastestSql, "INSERT INTO `tests`(`FirstName`,`LastName`) VALUES ('John','Doe')");
 });
 
 $tf->test("MySQL. Testing Deleting Rows", function ($tf) {
