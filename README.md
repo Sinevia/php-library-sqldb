@@ -174,4 +174,6 @@ $uid32 = Sinevia\SqlDB::uid(32); // 32 digits
 
 # Related Projects #
 
-- [Tasks]https://github.com/Sinevia/php-library-sqldb-tasks
+- [Cache](https://github.com/Sinevia/php-library-sqldb-cache)
+- [Monolog](https://github.com/Sinevia/php-library-sqldb-monolog)
+- [Tasks](https://github.com/Sinevia/php-library-sqldb-tasks)
