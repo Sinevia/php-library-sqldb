@@ -3,6 +3,12 @@
 PHP Library for working with SQL databases.
 
 ![No Dependencies](https://img.shields.io/badge/no-dependencies-success.svg)
+[![Build status][build-status-master-image]][build-status-master]
+[![GitHub stars](https://img.shields.io/github/stars/Sinevia/php-library-sqldb.svg?style=social&label=Star&maxAge=2592000)](https://GitHub.com/Sinevia/php-library-sqldb/stargazers/)
+[![HitCount](http://hits.dwyl.io/Sinevia/badges.svg)](http://hits.dwyl.io/Sinevia/badges)
+
+[build-status-master]: https://travis-ci.com/Sinevia/php-library-sqldb
+[build-status-master-image]: https://api.travis-ci.com/Sinevia/php-library-sqldb.svg?branch=master
 
 ## Features ##
 - MySQL, SQlite and SQLiteDB (SQLite in the cloud) supported
