@@ -1,0 +1,16 @@
+sudo: false
+
+language: php
+
+php:
+  - 7.3
+
+before_install:
+  - composer self-update
+
+install:
+  - travis_retry composer install --no-interaction
+  - composer info
+
+script:
+- php tests/test.php
