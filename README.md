@@ -28,7 +28,7 @@ Add the latest stable version to your composer file, and update via composer
 
 ```json
 "require": {
-    "sinevia/php-library-sqldb": "2.6.0"
+    "sinevia/php-library-sqldb": "3.8.0"
 }
 ```
 
