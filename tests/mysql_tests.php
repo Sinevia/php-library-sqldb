@@ -8,7 +8,10 @@ $tf->test("MySQL. Testing Creating Tables", function ($tf) {
     $lastestSql = array_pop(dbMysql()->sqlLog);
     //var_dump($lastestSql);
     $tf->assertTrue($result);
-    $tf->assertEquals($lastestSql, "CREATE TABLE `test_creating_tables`(`Id` BIGINT PRIMARY AUTO_INCREMENT);");
+    $tf->assertEquals($lastestSql, "CREATE TABLE `test_creating_tables`(`Id` BIGINT AUTO_INCREMENT);");
+    
+    $result = dbMysql()->table('test_creating_tables')->exists();
+    $tf->assertTrue($result);
 });
 
 $tf->test("MySQL. Testing Test Table Exists", function ($tf) {
