@@ -16,7 +16,7 @@ function dbSqlite()
             'database_type' => 'sqlite',
             'database_host' => ":memory:",
             'database_name' => ":memory:",
-            'database_user' => "test",
+            'database_user' => "root",
             'database_pass' => "",
         ));
     }
@@ -32,10 +32,10 @@ function dbMySql()
     static $db = null;
     if (is_null($db)) {
         $db = new \Sinevia\SqlDb(array(
-            'database_type' => 'sqlite',
-            'database_host' => ":memory:",
-            'database_name' => ":memory:",
-            'database_user' => "test",
+            'database_type' => 'mysql',
+            'database_host' => "localhost",
+            'database_name' => "test",
+            'database_user' => "root",
             'database_pass' => "",
         ));
     }
