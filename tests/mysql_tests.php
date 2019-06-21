@@ -89,5 +89,5 @@ $tf->test("MySQL. Testing WHERE clauses", function ($tf) {
     $result = tableMysql()->where('FirstName', '=', 'Ben')->where('FirstName', '=', 'Sean', 'OR')->select();
     $tf->assertEquals(count($result), 2);
     $lastestSql = array_pop(dbMysql()->sqlLog);
-    $tf->assertEquals($lastestSql, "SELECT * FROM 'tests' WHERE FirstName = 'Ben' OR FirstName = 'Sean';");
+    $tf->assertEquals($lastestSql, "SELECT * FROM `tests` WHERE `FirstName` = 'Ben' OR `FirstName` = 'Sean';");
 });
