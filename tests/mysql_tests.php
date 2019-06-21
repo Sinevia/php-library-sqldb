@@ -1,4 +1,5 @@
 <?php
+dbMysql()->debug = true;
 
 $tf->test("MySQL. Testing Creating Tables", function ($tf) {
     //db()->debug = true;
