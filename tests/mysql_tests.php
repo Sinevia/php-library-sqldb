@@ -11,6 +11,12 @@ $tf->test("MySQL. Testing Creating Tables", function ($tf) {
     $tf->assertEquals($lastestSql, "CREATE TABLE `test_creating_tables`(`Id` BIGINT PRIMARY AUTO_INCREMENT);");
 });
 
+$tf->test("MySQL. Testing Test Table Exists", function ($tf) {
+    //db()->debug = true;
+    $result = tableMysql()->exists());
+    $tf->assertTrue($result);
+});
+
 $tf->test("MySQL. Testing Inserting Rows", function ($tf) {
     //db()->debug = true;
     $result = tableMysql()->insert(['FirstName' => 'John', 'LastName' => 'Doe']);
