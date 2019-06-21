@@ -1,6 +1,9 @@
 <?php
+
 define("ENVIRONMENT", 'testing');
+
 require dirname(__DIR__) . '/vendor/autoload.php';
+
 /**
  * Returns a database instance
  * @return \Sinevia\SqlDb
@@ -20,12 +23,15 @@ function db()
     return $db;
 }
 
+/**
+ * Returns a table instance
+ * @return \Sinevia\SqlDb
+ */
 function table()
 {
     return db()->table('tests');
 }
 
-//\App\Models\Content\Node::getDatabase()->debug = true;
 $tf = new \Testify\Testify("SqlDb Test Suite");
 
 $tf->beforeEach(function ($tf) {
@@ -127,16 +133,16 @@ $tf->test("Testing lastInsertId", function ($tf) {
 $tf->test("Testing WHERE clauses", function ($tf) {
     //db()->debug = true;
 
-    $result = table()->insert(['FirstName' => 'John', 'LastName' => 'Doe');
+    $result = table()->insert(['FirstName' => 'John', 'LastName' => 'Doe']);
     $tf->assertTrue($result);
 
-    $result = table()->insert(['FirstName' => 'Ben', 'LastName' => 'Smith');
+    $result = table()->insert(['FirstName' => 'Ben', 'LastName' => 'Smith']);
     $tf->assertTrue($result);
 
-    $result = table()->insert(['FirstName' => 'Tom', 'LastName' => 'Johnson');
+    $result = table()->insert(['FirstName' => 'Tom', 'LastName' => 'Johnson']);
     $tf->assertTrue($result);
 
-    $result = table()->insert([['FirstName' => 'Sean', 'LastName' => 'Farah');
+    $result = table()->insert([['FirstName' => 'Sean', 'LastName' => 'Farah']);
     $tf->assertTrue($result);
 
     $result = table()->where('FirstName', '=', 'Tom')->select();
