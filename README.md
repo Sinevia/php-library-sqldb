@@ -165,3 +165,7 @@ HUIDs are human friendly unique identifiers, which are date based.
 $uid20 = Sinevia\SqlDB::uid(); // 20 digits default
 $uid32 = Sinevia\SqlDB::uid(32); // 32 digits
 ```
+
+# Related Projects #
+
+- (['Tasks'] https://github.com/Sinevia/php-library-sqldb-tasks/)
