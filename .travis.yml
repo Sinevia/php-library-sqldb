@@ -4,6 +4,23 @@ language: php
 
 php:
   - 7.3
+  
+services:
+- mysql
+  
+addons:
+  apt:
+    sources:
+      - mysql-5.7-trusty
+    packages:
+      - mysql-server
+
+dist: trusty
+
+sudo: required
+
+before_script:
+- mysql -e 'create database test;'
 
 before_install:
   - composer self-update
