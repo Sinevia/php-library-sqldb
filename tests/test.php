@@ -142,7 +142,7 @@ $tf->test("Testing WHERE clauses", function ($tf) {
     $result = table()->insert(['FirstName' => 'Tom', 'LastName' => 'Johnson']);
     $tf->assertTrue($result);
 
-    $result = table()->insert([['FirstName' => 'Sean', 'LastName' => 'Farah']);
+    $result = table()->insert(['FirstName' => 'Sean', 'LastName' => 'Farah']);
     $tf->assertTrue($result);
 
     $result = table()->where('FirstName', '=', 'Tom')->select();
