@@ -34,7 +34,7 @@ Add the latest stable version to your composer file, and update via composer
 
 ## Data Types ##
 
-| Data Type | MySLQ Data Type | SQLite Data Type |
+| Data Type | MySQL Data Type | SQLite Data Type |
 |-----------|-----------------|------------------|
 | STRING    | VARCHAR (255)   | TEXT             |
 | TEXT      | LONG TEXT       | TEXT             |
