@@ -38,7 +38,7 @@ Add the latest stable version to your composer file, and update via composer
 |-----------|-----------------|------------------|
 | STRING    | VARCHAR (255)   | TEXT             |
 | TEXT      | LONG TEXT       | TEXT             |
-| INTGER    | BIG INT         | INTEGER          |
+| INTEGER    | BIG INT         | INTEGER          |
 | FLOAT     | DOUBLE          | REAL             |
 | BLOB      | LONG BLOB       | TEXT             |
 
