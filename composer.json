@@ -25,5 +25,8 @@
     "require-dev": {
         "bafs/testify": "^1.0",
         "phpunit/phpunit": "^8.5"
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
     }
 }
