@@ -23,6 +23,7 @@
         ]
     },
     "require-dev": {
-        "bafs/testify": "^1.0"
+        "bafs/testify": "^1.0",
+        "phpunit/phpunit": "^8.5"
     }
 }
