@@ -5,6 +5,8 @@ language: php
 php:
   - 7.3
   
+dist: xenial
+  
 services:
 - mysql
   
