@@ -1,8 +1,18 @@
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/Sinevia/php-library-sqldb) 
+
 # PHP Library SqlDB
 
 PHP Library for working with SQL databases.
 
-## Background ##
+![No Dependencies](https://img.shields.io/badge/no-dependencies-success.svg)
+[![Build status][build-status-master-image]][build-status-master]
+[![GitHub stars](https://img.shields.io/github/stars/Sinevia/php-library-sqldb.svg?style=social&label=Star&maxAge=2592000)](https://GitHub.com/Sinevia/php-library-sqldb/stargazers/)
+[![HitCount](http://hits.dwyl.io/Sinevia/badges.svg)](http://hits.dwyl.io/Sinevia/badges)
+
+[build-status-master]: https://travis-ci.com/Sinevia/php-library-sqldb
+[build-status-master-image]: https://api.travis-ci.com/Sinevia/php-library-sqldb.svg?branch=master
+
+## Features ##
 - MySQL, SQlite and SQLiteDB (SQLite in the cloud) supported
 - Unified data types. The data types are developer orientated (string, text, integer, float, blob). These are then translated to the correct column type for the corresponding database.
 - Fluent interface for building queries
@@ -20,17 +30,17 @@ Add the latest stable version to your composer file, and update via composer
 
 ```json
 "require": {
-    "sinevia/php-library-sqldb": "2.6.0"
+    "sinevia/php-library-sqldb": "3.8.0"
 }
 ```
 
 ## Data Types ##
 
-| Data Type | MySLQ Data Type | SQLite Data Type |
+| Data Type | MySQL Data Type | SQLite Data Type |
 |-----------|-----------------|------------------|
 | STRING    | VARCHAR (255)   | TEXT             |
 | TEXT      | LONG TEXT       | TEXT             |
-| INTGER    | BIG INT         | INTEGER          |
+| INTEGER    | BIG INT         | INTEGER          |
 | FLOAT     | DOUBLE          | REAL             |
 | BLOB      | LONG BLOB       | TEXT             |
 
@@ -84,7 +94,7 @@ $db->drop();
 if ($db->table("person")->exists() == false) {
     // Create table
     $db->table("person")
-        ->column("Id", "INTEGER", "NOT NULL PRIMARY KEY")
+        ->column("Id", "INTEGER", "NOT NULL PRIMARY KEY AUTO_INCREMENT")
         ->column("FirstName", "STRING")
         ->column("LastName", "STRING")
         ->create();
@@ -163,3 +173,9 @@ HUIDs are human friendly unique identifiers, which are date based.
 $uid20 = Sinevia\SqlDB::uid(); // 20 digits default
 $uid32 = Sinevia\SqlDB::uid(32); // 32 digits
 ```
+
+# Related Projects #
+
+- [Cache](https://github.com/Sinevia/php-library-sqldb-cache)
+- [Monolog](https://github.com/Sinevia/php-library-sqldb-monolog)
+- [Tasks](https://github.com/Sinevia/php-library-sqldb-tasks)

@@ -3,7 +3,7 @@
 // ========================================================================= //
 // SINEVIA PUBLIC                                        http://sinevia.com  //
 // ------------------------------------------------------------------------- //
-// COPYRIGHT (c) 2008-2018 Sinevia Ltd                   All rights reserved //
+// COPYRIGHT (c) 2008-2019 Sinevia Ltd                   All rights reserved //
 // ------------------------------------------------------------------------- //
 // LICENCE: All information contained herein is, and remains, property of    //
 // Sinevia Ltd at all times.  Any intellectual and technical concepts        //
@@ -17,35 +17,41 @@ namespace Sinevia;
 
 use \OutOfRangeException;
 
-interface IActiveRecord {
+interface IActiveRecord
+{
 
-    static function getDatabase();
+    public static function getDatabase();
 
     static function getTableName();
 
     static function getKeys();
 }
 
-abstract class ActiveRecord implements IActiveRecord {
+abstract class ActiveRecord implements IActiveRecord
+{
 
-    public static function getKeys() {
+    public static function getKeys()
+    {
         return static::$keys;
     }
 
-    public static function getTableName() {
+    public static function getTableName()
+    {
         return static::$table;
     }
 
-    public static function getDatabase() {
+    public static function getDatabase()
+    {
         return \Application::getDatabase();
     }
-    
+
     /**
      * Finds a record by the specified key(s)
      * @param mixed $key
      * @return ActiveRecord
      */
-    public static function find($key) {
+    public static function find($key)
+    {
         $class_name = get_called_class();
         $o = new $class_name;
         $keys = func_get_args();
@@ -59,17 +65,42 @@ abstract class ActiveRecord implements IActiveRecord {
             $db = $db->where($okeys[$i], '=', $keys[$i]);
         }
         $result = $db->selectOne();
-        
-        if($result===null){
+
+        if ($result === null) {
             return null;
         }
-        
+
         $o->data = $result;
         return $o;
     }
+    
+    /**
+     * Refreshes the instance data from the database
+     */
+    public function refresh(){
+        $keys = static::getKeys();
+        $db = static::getDatabase();
+        $db = $db->table(static::getTableName());
+        for ($i = 0; $i < count($keys); $i++) {
+            $db = $db->where($keys[$i], '=', $this->data[$keys[$i]]);
+        }
+        $result = $db->selectOne();
+        
+        if ($result !== null) {
+            $this->data = $result;
+            return true;
+        }
+        
+        return false;
+    }
 
-    protected function insert() {
-        $db = self::getDatabase();
+    /**
+     * Inserts the record
+     * @return boolean
+     */
+    protected function insert()
+    {
+        $db = static::getDatabase();
         $db->table($this->getTableName())->insert($this->data_changed);
 
         // If the primary key is Autoincrement field, populate it
@@ -80,13 +111,22 @@ abstract class ActiveRecord implements IActiveRecord {
             $this->data[$primary_key] = $primary_key_value;
         }
         $this->data_changed = array();
+        
+        // Reselect to pull any data (and columns) defaulted in the database
+        $this->refresh();
+        
         return true;
     }
 
-    protected function update() {
+    /**
+     * Updates the record
+     * @return boolean
+     */
+    protected function update()
+    {
         $keys = $this->getKeys();
-        $db = self::getDatabase();
-        $db = $db->table(self::getTableName());
+        $db = static::getDatabase();
+        $db = $db->table(static::getTableName());
         for ($i = 0; $i < count($keys); $i++) {
             $db = $db->where($keys[$i], '=', $this->data[$keys[$i]]);
         }
@@ -101,21 +141,49 @@ abstract class ActiveRecord implements IActiveRecord {
      * Deletes the record
      * @return boolean
      */
-    public function delete() {
+    public function delete()
+    {
+        $beforeDeleteExists = method_exists($this, 'beforeDelete');
+
+        if ($beforeDeleteExists){
+            call_user_func([$this,'beforeDelete']);
+        }
+        
         $keys = $this->getKeys();
-        $db = self::getDatabase();
-        $db = $db->table(self::getTableName());
+        $db = static::getDatabase();
+        $db = $db->table(static::getTableName());
         for ($i = 0; $i < count($keys); $i++) {
             $db = $db->where($keys[$i], '=', $this->data[$keys[$i]]);
         }
         return $db->delete();
     }
 
-    public function save() {
+    /**
+     * Saves the record
+     * @return boolean
+     */
+    public function save()
+    {
+        $beforeSaveExists = method_exists($this, 'beforeSave');
+        $beforeInsertExists = method_exists($this, 'beforeInsert');
+        $beforeUpdateExists = method_exists($this, 'beforeUpdate');
+        
+        if ($beforeSaveExists){
+            call_user_func([$this,'beforeSave']);
+        }   
+        
         if (count($this->data_changed) == count($this->data)) {
-            $this->insert();
+            if ($beforeInsertExists) {
+                call_user_func([$this,'beforeInsert']);
+            }
+            
+            return $this->insert();
         } else {
-            $this->update();
+            if ($beforeUpdateExists) {
+                call_user_func([$this,'beforeUpdate']);
+            }
+            
+            return $this->update();
         }
     }
 
@@ -135,10 +203,12 @@ abstract class ActiveRecord implements IActiveRecord {
      * Gets a property field value. If the property is not defined
      * in the data OutOfRangeException will be thrown.
      * @param $name String the name of the property
-     * @throws InvalidArgumentException if the given parameter is not string 
+     * @param mixed $defaut the defaut value to be returned, if no vaue exists
+     * @throws InvalidArgumentException if the given parameter is not string
      * @throws OutOfRangeException if the parameter is not in the data
      */
-    function get($name) {
+    function get($name)
+    {
         if (is_string($name) == false) {
             throw new InvalidArgumentException("The first parameter in the get method in " . get_class($this) . " MUST be of type String: <b>" . gettype($name) . "</b> given");
         }
@@ -156,7 +226,8 @@ abstract class ActiveRecord implements IActiveRecord {
      * @throws InvalidArgumentException
      * @throws OutOfRangeException
      */
-    public function set($name, $value) {
+    public function set($name, $value)
+    {
         if (is_string($name) == false) {
             throw new InvalidArgumentException("The first parameter in the set method class " . get_class($this) . " MUST be of type String: <b>" . gettype($name) . "</b> given");
         }
