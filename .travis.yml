@@ -11,13 +11,13 @@ services:
 - mysql
   
 addons:
-  apt:
-    sources:
-      - mysql-5.7-trusty
-    packages:
-      - mysql-server
+#  apt:
+#    sources:
+#      - mysql-5.7-trusty
+#    packages:
+#      - mysql-server
 
-dist: trusty
+#dist: trusty
 
 sudo: required
 
