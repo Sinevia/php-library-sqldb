@@ -3,7 +3,7 @@
 // ========================================================================= //
 // SINEVIA PUBLIC                                        http://sinevia.com  //
 // ------------------------------------------------------------------------- //
-// COPYRIGHT (c) 2008-2019 Sinevia Ltd                   All rights reserved //
+// COPYRIGHT (c) 2008-2020 Sinevia Ltd                   All rights reserved //
 // ------------------------------------------------------------------------- //
 // LICENCE: All information contained herein is, and remains, property of    //
 // Sinevia Ltd at all times.  Any intellectual and technical concepts        //
@@ -98,12 +98,19 @@ class SqlDb
      */
     function __construct($options = array())
     {
-        $this->database_type = isset($options['database_type']) == false ? '' : trim($options['database_type']);
-        $this->database_name = isset($options['database_name']) == false ? '' : trim($options['database_name']);
-        $this->database_host = isset($options['database_host']) == false ? '' : trim($options['database_host']);
-        $this->database_user = isset($options['database_user']) == false ? '' : trim($options['database_user']);
-        $this->database_pass = isset($options['database_pass']) == false ? '' : trim($options['database_pass']);
-        $this->dsn = isset($options['dsn']) == false ? '' : trim($options['dsn']);
+        $type = trim($options['database_type'] ?? '');
+        $name = trim($options['database_name'] ?? '');
+        $host = trim($options['database_host'] ?? '');
+        $user = trim($options['database_user'] ?? '');
+        $pass = trim($options['database_pass'] ?? '');
+        $dsn = trim($options['dsn'] ?? '');
+
+        $this->database_type = $type;
+        $this->database_name = $name;
+        $this->database_host = $host;
+        $this->database_user = $user;
+        $this->database_pass = $pass;
+        $this->dsn = $dsn;
     }
 
     /**
