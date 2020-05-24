@@ -298,6 +298,9 @@ class SqlDb
             }
         } else {
             try {
+                if (is_object($this->dbh) == false) {
+                    throw new \RuntimeException('Database handle is ' . gettype($this->dbh));
+                }
                 $result = $this->dbh->exec($sql);
                 if ($this->debug) {
                     $this->debug('END: Executing non query SUCCESS.');
@@ -354,6 +357,9 @@ class SqlDb
         } else {
 
             try {
+                if (is_object($this->dbh) == false) {
+                    throw new \RuntimeException('Database handle is ' . gettype($this->dbh));
+                }
                 foreach ($this->dbh->query($sql, $return_type) as $row) {
                     $result[] = $row;
                 }
