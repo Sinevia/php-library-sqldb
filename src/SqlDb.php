@@ -43,8 +43,7 @@ namespace Sinevia;
  * </code>
  * @package Simplest
  */
-class SqlDb
-{
+class SqlDb {
 
     /**
      * @var \PDO
@@ -96,14 +95,33 @@ class SqlDb
      * Constructor
      * @param array $options
      */
-    function __construct($options = array())
-    {
+    function __construct($options = array()) {
         $type = trim($options['database_type'] ?? '');
         $name = trim($options['database_name'] ?? '');
         $host = trim($options['database_host'] ?? '');
         $user = trim($options['database_user'] ?? '');
         $pass = trim($options['database_pass'] ?? '');
         $dsn = trim($options['dsn'] ?? '');
+
+        if ($dsn == "" && $type == "") {
+            throw new \RuntimeException("database_type is required parameter");
+        }
+
+        if ($dsn != "") {
+            if (strpos($dsn, 'mysql') !== false) {
+                $type = "mysql";
+            } else if (strpos($dsn, 'sqlitedb') !== false) {
+                $type = "sqlitedb";
+            } else if (strpos($dsn, 'sqlite') !== false) {
+                $type = "sqlite";
+            }
+        }
+
+        $supportedDrivers = ['mysql', 'sqlite', 'sqlitedb'];
+
+        if (in_array($type, $supportedDrivers) == false) {
+            throw new \RuntimeException('Only ' . implode(',', $supportedDrivers) . ' are supported');
+        }
 
         $this->database_type = $type;
         $this->database_name = $name;
@@ -116,8 +134,7 @@ class SqlDb
     /**
      * @return \PDO
      */
-    function getPdo()
-    {
+    function getPdo() {
         $this->open();
         return $this->dbh;
     }
@@ -126,8 +143,7 @@ class SqlDb
      * Sets the PDO object to be used for the instance
      * @param \PDO $pdo
      */
-    function setPdo($pdo)
-    {
+    function setPdo($pdo) {
         $this->dbh = $pdo;
         $name = $this->dbh->getAttribute(\PDO::ATTR_DRIVER_NAME);
         if ($name == "mysql") {
@@ -144,8 +160,7 @@ class SqlDb
      * function are not needed.
      * @return boolean
      */
-    function open()
-    {
+    function open() {
         if ($this->dbh != false) {
             return true;
         }
@@ -186,7 +201,7 @@ class SqlDb
             $this->dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
             return true;
         } catch (\PDOException $e) {
-            echo 'Connection failed: ' . $e->getMessage();
+            throw new \RuntimeException('Connection failed: ' . $e->getMessage());
         }
         return false;
     }
@@ -197,8 +212,7 @@ class SqlDb
      * function are not needed.
      * @return void
      */
-    function close()
-    {
+    function close() {
         $this->dbh = null;
     }
 
@@ -216,8 +230,7 @@ class SqlDb
      * @return SqlDb an instance of this database
      * @access public
      */
-    function column($column_name, $column_type = null, $column_properties = null)
-    {
+    function column($column_name, $column_type = null, $column_properties = null) {
         if (isset($this->sql["table"]) == false) {
             trigger_error('ERROR: In class <b>' . get_class($this) . '</b> in method <b>column($column,$details)</b>: Trying to attach column to non-specified table!', E_USER_ERROR);
         }
@@ -242,8 +255,7 @@ class SqlDb
      * @param string $sql
      * @return string
      */
-    function post($sql)
-    {
+    function post($sql) {
         $http = new HttpClient($this->database_host);
         $result = $http->post([
             'api_key' => $this->database_pass,
@@ -272,8 +284,7 @@ class SqlDb
      * @return mixed false if the query fails, SQL specific result otherwise
      * @access public
      */
-    function executeNonQuery($sql)
-    {
+    function executeNonQuery($sql) {
         $this->open();
         if ($this->debug) {
             $this->debug('START: Executing non query...');
@@ -329,8 +340,7 @@ class SqlDb
      * @return array|boolean array with the query result, false if the query fails
      * @access public
      */
-    function executeQuery($sql, $return_type = \PDO::FETCH_ASSOC)
-    {
+    function executeQuery($sql, $return_type = \PDO::FETCH_ASSOC) {
         $this->open();
         $result = array();
         if ($this->debug) {
@@ -396,8 +406,7 @@ class SqlDb
      * @return boolean true, on success, false, otherwise
      * @access public
      */
-    function create($table_columns = array())
-    {
+    function create($table_columns = array()) {
         // START: Creating new table
         if (isset($this->sql["table"])) {
             $table_name = $this->sql["table"][0];
@@ -472,10 +481,11 @@ class SqlDb
      * @return boolean true, on success, false, otherwise
      * @access public
      */
-    function delete()
-    {
-        if (isset($this->sql["table"]) == false)
+    function delete() {
+        if (isset($this->sql["table"]) == false) {
             trigger_error('ERROR: In class <b>' . get_class($this) . '</b> in method <b>delete()</b>: Not specified table to delete from!', E_USER_ERROR);
+        }
+
         $table_name = $this->sql["table"][0];
         $where = isset($this->sql["where"]) == false ? '' : $this->where_to_sql($this->sql["where"]);
         $orderby = isset($this->sql["orderby"]) == false ? '' : $this->orderby_to_sql($this->sql["orderby"]);
@@ -491,8 +501,11 @@ class SqlDb
 
         $this->sql = array(); // Emptying the SQL array
         $result = $this->executeNonQuery($sql);
-        if ($result === false)
+
+        if ($result === false) {
             return false;
+        }
+
         return $result;
     }
 
@@ -508,8 +521,7 @@ class SqlDb
      * @return boolean true, on success, false, otherwise
      * @access public
      */
-    function drop()
-    {
+    function drop() {
         // Drop table SQL query
         if (isset($this->sql["table"])) {
             $table_name = $this->sql["table"][0];
@@ -593,8 +605,7 @@ class SqlDb
      * @return boolean true, on success, false, otherwise
      * @access public
      */
-    function exists()
-    {
+    function exists() {
         // Checking tables
         if (isset($this->sql["table"])) {
             $table_name = $this->sql["table"][0];
@@ -670,8 +681,7 @@ class SqlDb
      * @param SqlDb $column_name
      * @return $this
      */
-    function groupBy($column_name)
-    {
+    function groupBy($column_name) {
         if (isset($this->sql["groupby"]) == false) {
             $this->sql["groupby"] = array();
         }
@@ -689,8 +699,7 @@ class SqlDb
      * @return boolean true, on success, false, otherwise
      * @access public
      */
-    function insert($row_values)
-    {
+    function insert($row_values) {
         $this->open();
         if (isset($this->sql["table"]) == false)
             trigger_error('ERROR: In class <b>' . get_class($this) . '</b> in method <b>insert($row_values)</b>: Not specified table to insert a row in!', E_USER_ERROR);
@@ -728,8 +737,7 @@ class SqlDb
      * @return SqlDb an instance of this database
      * @access public
      */
-    function join($table_name, $column1, $column2, $type = "", $alias = "")
-    {
+    function join($table_name, $column1, $column2, $type = "", $alias = "") {
         if (is_string($table_name) == false) {
             throw new \RuntimeException('In class ' . get_class($this) . ' in method join($table_name,$column1,$column2): $table_name parameter MUST BE of type string');
         }
@@ -766,8 +774,7 @@ class SqlDb
      * @return mixed rows as associative array, false on error
      * @access public
      */
-    function lastInsertId()
-    {
+    function lastInsertId() {
         // MySQL
         if ($this->database_type == 'mysql') {
             $sql = 'SELECT LAST_INSERT_ID();';
@@ -781,8 +788,9 @@ class SqlDb
 
         $this->sql = array(); // Emptying the SQL array
         $result = $this->executeQuery($sql);
-        if ($result === false)
+        if ($result === false) {
             return false;
+        }
         return $result[0]["LAST_INSERT_ID()"];
     }
 
@@ -797,10 +805,10 @@ class SqlDb
      * @return SqlDB an instance of this database
      * @access public
      */
-    function limit($start, $end = null)
-    {
-        if (isset($this->sql["limit"]) == false)
+    function limit($start, $end = null) {
+        if (isset($this->sql["limit"]) == false) {
             $this->sql["limit"] = array();
+        }
         if (is_null($end)) {
             $this->sql["limit"] = $start;
         } else {
@@ -824,8 +832,7 @@ class SqlDb
      * @return Integer next ID in a column
      * @access public
      */
-    function nextId($column_name)
-    {
+    function nextId($column_name) {
         if (isset($this->sql["table"]) == false) {
             trigger_error('ERROR: In class <b>' . get_class($this) . '</b> in method <b>select()</b>: Not specified table to select from!', E_USER_ERROR);
         }
@@ -871,8 +878,7 @@ class SqlDb
      * @return Integer the number of rows
      * @access public
      */
-    function numRows()
-    {
+    function numRows() {
         if (isset($this->sql["table"]) == false) {
             trigger_error('ERROR: In class <b>' . get_class($this) . '</b> in method <b>select()</b>: Not specified table to select from!', E_USER_ERROR);
         }
@@ -912,8 +918,7 @@ class SqlDb
      * @return SqlDB
      * @access public
      */
-    function orderBy($column_name, $type = "asc")
-    {
+    function orderBy($column_name, $type = "asc") {
         if (isset($this->sql["orderby"]) == false) {
             $this->sql["orderby"] = array();
         }
@@ -921,8 +926,7 @@ class SqlDb
         return $this;
     }
 
-    function quote($string)
-    {
+    function quote($string) {
         $this->open(); // As may not be opened
         return $this->dbh->quote($string);
     }
@@ -941,8 +945,7 @@ class SqlDb
      * @return mixed rows as associative array, false on error
      * @access public
      */
-    function select($columns = "*")
-    {
+    function select($columns = "*") {
         $sql = '';
 
         if (isset($this->sql["table"]) == false) {
@@ -982,8 +985,7 @@ class SqlDb
      * @param string $columns
      * @return array|boolean array with the query result, false if the query fails
      */
-    function selectOne($columns = '*')
-    {
+    function selectOne($columns = '*') {
         $results = $this->limit(1)->select($columns);
         if ($results !== false && count($results) > 0) {
             return $results[0];
@@ -996,8 +998,7 @@ class SqlDb
      * @param string $columnName
      * @return array
      */
-    function selectColumn($columnName)
-    {
+    function selectColumn($columnName) {
         $results = $this->select([$columnName]);
         return array_column($results, $columnName);
     }
@@ -1013,8 +1014,7 @@ class SqlDb
      * @return SqlDB an instance of this database
      * @access public
      */
-    function table($table)
-    {
+    function table($table) {
         isset($this->sql["table"]) ? $this->sql["table"] = array() : true;
         $this->sql["table"][] = $table;
         return $this;
@@ -1028,8 +1028,7 @@ class SqlDb
      * @return array with columns in the table
      * @access public
      */
-    function columns($unisex = true)
-    {
+    function columns($unisex = true) {
         if (isset($this->sql["table"]) == false) {
             throw new \RuntimeException('ERROR: In class <b>' . get_class($this) . '</b> in method <b>columns()</b>: Trying fetch columns from non-specified table!');
         }
@@ -1147,8 +1146,7 @@ class SqlDb
      * @return array the names of the tables
      * @access public
      */
-    function tables()
-    {
+    function tables() {
         $tables = array();
         if ($this->database_type == 'mysql') {
             //$sql = "SHOW TABLES";
@@ -1180,8 +1178,7 @@ class SqlDb
      * Starts a transaction
      * @return bool
      */
-    function transactionBegin()
-    {
+    function transactionBegin() {
         $this->open();
         return $this->dbh->beginTransaction();
     }
@@ -1190,8 +1187,7 @@ class SqlDb
      * Commits a transaction
      * @return bool
      */
-    function transactionCommit()
-    {
+    function transactionCommit() {
         $this->open();
         return $this->dbh->commit();
     }
@@ -1200,8 +1196,7 @@ class SqlDb
      * Rolls back a transaction
      * @return string
      */
-    function transactionRollBack()
-    {
+    function transactionRollBack() {
         $this->open();
         return $this->dbh->rollBack();
     }
@@ -1215,8 +1210,7 @@ class SqlDb
      * </code>
      * @return  string
      */
-    public static function uid($length = 20)
-    {
+    public static function uid($length = 20) {
         $uid = date('YmdHis') . substr(explode(" ", microtime())[0], 2, 8) . rand(100000000000, 999999999999);
         return substr($uid, 0, $length);
     }
@@ -1230,26 +1224,25 @@ class SqlDb
      * </code>
      * @return  string
      */
-    public static function uuid($options)
-    {
+    public static function uuid($options) {
         $uuid = sprintf(
-            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            // 32 bits for "time_low"
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-            // 16 bits for "time_mid"
-            mt_rand(0, 0xffff),
-            // 16 bits for "time_hi_and_version",
-            // four most significant bits holds version number 4
-            mt_rand(0, 0x0fff) | 0x4000,
-            // 16 bits, 8 bits for "clk_seq_hi_res",
-            // 8 bits for "clk_seq_low",
-            // two most significant bits holds zero and one for variant DCE1.1
-            mt_rand(0, 0x3fff) | 0x8000,
-            // 48 bits for "node"
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff)
+                '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+                // 32 bits for "time_low"
+                mt_rand(0, 0xffff),
+                mt_rand(0, 0xffff),
+                // 16 bits for "time_mid"
+                mt_rand(0, 0xffff),
+                // 16 bits for "time_hi_and_version",
+                // four most significant bits holds version number 4
+                mt_rand(0, 0x0fff) | 0x4000,
+                // 16 bits, 8 bits for "clk_seq_hi_res",
+                // 8 bits for "clk_seq_low",
+                // two most significant bits holds zero and one for variant DCE1.1
+                mt_rand(0, 0x3fff) | 0x8000,
+                // 48 bits for "node"
+                mt_rand(0, 0xffff),
+                mt_rand(0, 0xffff),
+                mt_rand(0, 0xffff)
         );
         return $uuid;
     }
@@ -1264,8 +1257,7 @@ class SqlDb
      * @return int 0 or 1, on success, false, otherwise
      * @access public
      */
-    function update($row_values)
-    {
+    function update($row_values) {
         $this->open();
         if (isset($this->sql["table"]) == false) {
             trigger_error('ERROR: In class <b>' . get_class($this) . '</b> in method <b>insert($row_values)</b>: Not specified table to update a row in!', E_USER_ERROR);
@@ -1329,8 +1321,7 @@ class SqlDb
      * @return SqlDb
      * @access public
      */
-    function where($column_name, $comparison_operator = null, $value = null, $type = "AND")
-    {
+    function where($column_name, $comparison_operator = null, $value = null, $type = "AND") {
         if ($comparison_operator !== null and is_string($comparison_operator) == false) {
             throw new \InvalidArgumentException("The second parameter in where method in " . get_class($this) . " MUST be of type String: " . gettype($comparison_operator) . " given");
         }
@@ -1362,8 +1353,7 @@ class SqlDb
      * @param string $sqlWhere
      * @return $this
      */
-    function whereRaw($sqlWhere)
-    {
+    function whereRaw($sqlWhere) {
         $this->sql["where"][] = $sqlWhere;
         return $this;
     }
@@ -1373,8 +1363,7 @@ class SqlDb
      * @return String the colummns SQL string
      * @access private
      */
-    private function columns_to_sql($columns)
-    {
+    private function columns_to_sql($columns) {
         $sql = '';
         // MySQL
         if ($this->database_type == 'mysql') {
@@ -1469,8 +1458,7 @@ class SqlDb
      * @return String the join SQL string
      * @access private
      */
-    private function join_to_sql($join, $table_name)
-    {
+    private function join_to_sql($join, $table_name) {
         $sql = '';
         // MySQL
         if ($this->database_type == 'mysql') {
@@ -1506,8 +1494,7 @@ class SqlDb
         return $sql;
     }
 
-    private function whereToSqlSingle($column, $operator, $value)
-    {
+    private function whereToSqlSingle($column, $operator, $value) {
         if ($this->database_type == 'mysql') {
             $column = explode('.', $column);
             $columnQuoted = "`" . implode("`.`", $column) . "`";
@@ -1550,8 +1537,7 @@ class SqlDb
      * @param array $wheres
      * @return string
      */
-    private function where_to_sql($wheres)
-    {
+    private function where_to_sql($wheres) {
         $sql = array();
         // MySQL
         if ($this->database_type == 'mysql') {
@@ -1637,8 +1623,7 @@ class SqlDb
         }
     }
 
-    private function groupby_to_sql($groupbys)
-    {
+    private function groupby_to_sql($groupbys) {
         $sql = array();
         // MySQL
         if ($this->database_type == 'mysql') {
@@ -1656,8 +1641,7 @@ class SqlDb
         }
     }
 
-    private function orderby_to_sql($orderbys)
-    {
+    private function orderby_to_sql($orderbys) {
         $sql = array();
         // MySQL
         if ($this->database_type == 'mysql') {
@@ -1691,14 +1675,13 @@ class SqlDb
      * @param String the message to be printed
      * @return void
      */
-    protected function debug($msg)
-    {
+    protected function debug($msg) {
         $isCli = false;
         if (defined('STDIN')) {
             $isCli = true;
         }
 
-        if (empty($_SERVER['REMOTE_ADDR']) and !isset($_SERVER['HTTP_USER_AGENT']) and count($_SERVER['argv']) > 0) {
+        if (empty($_SERVER['REMOTE_ADDR']) and!isset($_SERVER['HTTP_USER_AGENT']) and count($_SERVER['argv']) > 0) {
             $isCli = true;
         }
         if ($this->debug) {
@@ -1709,4 +1692,5 @@ class SqlDb
             }
         }
     }
+
 }
