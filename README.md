@@ -76,6 +76,10 @@ $db = new Sinevia\SqlDB(array(
     'database_host'=>'sqlitedb_api_url',
     'database_pass'=>'sqlitedb_api_key'
 ));
+
+// Using existing PDO instance
+$db = new Sinevia\SqlDB($pdo);
+
 ```
 
 ### 2) Drop a database ###
