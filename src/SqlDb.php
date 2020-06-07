@@ -95,7 +95,19 @@ class SqlDb {
      * Constructor
      * @param array $options
      */
-    function __construct($options = array()) {
+    function __construct($options = null) {
+        if ($options == null) {
+            return;
+        }
+
+        if (is_object($options) AND is_a($options, 'PDO')) {
+            return $this->setPdo($options);
+        }
+
+        if (is_array($options) == false) {
+            return;
+        }
+        
         $type = trim($options['database_type'] ?? '');
         $name = trim($options['database_name'] ?? '');
         $host = trim($options['database_host'] ?? '');
