@@ -1209,6 +1209,7 @@ class SqlDb
     function tables()
     {
         $tables = array();
+        
         if ($this->database_type == 'mysql') {
             //$sql = "SHOW TABLES";
             $sql = "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_SCHEMA='" . $this->database_name . "'";

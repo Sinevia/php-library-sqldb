@@ -3,7 +3,7 @@
 require dirname(__DIR__) . '/vendor/autoload.php';
 require __DIR__ . '/helper.php';
 
-class MysqlTest extends \PHPUnit\Framework\TestCase
+class SqliteTest extends \PHPUnit\Framework\TestCase
 {
     private $dbal = null;
     private $sqldb = null;
@@ -26,7 +26,7 @@ class MysqlTest extends \PHPUnit\Framework\TestCase
     {
         $queryBuilder = $this->dbal->createQueryBuilder();
 
-        $doctrineSql = (string) $queryBuilder->select('id', 'name')->from('users');
+        $doctrineSql = (string) $queryBuilder->select('i"d', 'name')->from('users');
         $sqldbSql = $this->sqldb->table('users')->sql()->select(['id', 'name']);
         $sqldbSql = str_replace(["'", ';'], '', $sqldbSql); // Doctrine does not use quotes
         $sqldbSql = str_replace('id,name', 'id, name', $sqldbSql); // Doctrine uses spaces between columnss
