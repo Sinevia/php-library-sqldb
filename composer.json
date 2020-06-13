@@ -24,7 +24,8 @@
     },
     "require-dev": {
         "bafs/testify": "^1.0",
-        "phpunit/phpunit": "^8.5"
+        "phpunit/phpunit": "^8.5",
+        "doctrine/dbal": "^2.10"
     },
     "scripts": {
         "test": "vendor/bin/phpunit"
