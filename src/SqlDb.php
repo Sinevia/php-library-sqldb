@@ -677,10 +677,10 @@ class SqlDb
             }
 
             if ($this->database_type == 'mysql') {
-                try{
+                try {
                     $result = $this->executeQuery('SHOW DATABASES;');
-                } catch (\Exception $e){
-                    if (stripos($e->getMessage(), 'unknown database')){
+                } catch (\Exception $e) {
+                    if (stripos($e->getMessage(), 'unknown database')) {
                         return false;
                     }
                 }
@@ -1030,7 +1030,7 @@ class SqlDb
             $sql = "SELECT " . $columns . " FROM '" . $table_name . "'" . $join . $where . $groupby . $orderby . $limit . ";";
         }
 
-        if($this->sqlOutput){
+        if ($this->sqlOutput) {
             $this->sqlOutput = false; // Disable for future queries
             return $sql;
         }
@@ -1216,7 +1216,7 @@ class SqlDb
     function tables()
     {
         $tables = array();
-        
+
         if ($this->database_type == 'mysql') {
             //$sql = "SHOW TABLES";
             $sql = "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_SCHEMA='" . $this->database_name . "'";
@@ -1589,7 +1589,8 @@ class SqlDb
             } elseif ($value == NULL and $operator == "<>") {
                 $sql = $columnQuoted . " IS NOT NULL";
             } else {
-                $sql = $columnQuoted . " " . $operator . " '" . $value . "'";
+                $valueQuoted = $this->getPdo()->quote($value);
+                $sql = $columnQuoted . " " . $operator . " " . $valueQuoted;
             }
         }
         if ($this->database_type == 'sqlite') {
@@ -1606,7 +1607,8 @@ class SqlDb
             } elseif ($value == NULL and $operator == "<>") {
                 $sql = $columnQuoted . " IS NOT NULL";
             } else {
-                $sql = $columnQuoted . " " . $operator . " '" . $value . "'";
+                $valueQuoted = $this->getPdo()->quote($value);
+                $sql = $columnQuoted . " " . $operator . " " . $valueQuoted;
             }
         }
         return $sql;

@@ -13,14 +13,18 @@ class SqliteTest extends \PHPUnit\Framework\TestCase
         parent::setUp();
         //..
         $connectionParams = array(
-            'dbname' => 'db.sqlite',
-            'user' => 'user',
-            'password' => 'secret',
+            'dbname' => 'test',
+            'user' => 'root',
+            'password' => '',
             'host' => 'localhost',
-            'driver' => 'pdo_sqlite',
+            'driver' => 'pdo_mysql',
+            // 'database_type' => 'mysql',
+            // 'database_host' => "localhost",
+            // 'database_name' => "test",
+            // 'database_user' => "root",
         );
         $this->dbal = \Doctrine\DBAL\DriverManager::getConnection($connectionParams);
-        $this->sqldb = dbSqlite();
+        $this->sqldb = dbMySql();
     }
     public function testInit()
     {
@@ -28,7 +32,7 @@ class SqliteTest extends \PHPUnit\Framework\TestCase
 
         $doctrineSql = (string) $queryBuilder->select('id', 'name')->from('users');
         $sqldbSql = $this->sqldb->table('users')->sql()->select(['id', 'name']);
-        $sqldbSql = str_replace(["'", ';'], '', $sqldbSql); // Doctrine does not use quotes
+        $sqldbSql = str_replace(["`", ';'], '', $sqldbSql); // Doctrine does not use quotes
         $sqldbSql = str_replace('id,name', 'id, name', $sqldbSql); // Doctrine uses spaces between columnss
         $this->assertEquals($sqldbSql, $doctrineSql);
     }
@@ -36,13 +40,14 @@ class SqliteTest extends \PHPUnit\Framework\TestCase
     public function testWhereValuesEscaped()
     {
         $sqldbSql = $this->sqldb->table('users')->where('id', '=', 'tom\' or 1=1;–-')->sql()->select();
-        $this->assertStringContainsStringIgnoringCase("'tom'' or 1=1;–-';", $sqldbSql);
+        $this->assertStringContainsStringIgnoringCase("'tom\' or 1=1;–-';", $sqldbSql);
 
-        //$this->sqldb->debug = true;
+        // $this->sqldb->debug = true;
         $this->sqldb->table('users')->column('id', 'string')->column('name', 'string')->create();
         $this->sqldb->table('users')->insert(['id' => '1', 'name' => 'Tom']);
         $this->sqldb->table('users')->insert(['id' => '2', 'name' => 'Ben']);
         $result = ($this->sqldb->table('users')->executeQuery($sqldbSql));
+        //var_dump($result);
         $this->assertIsArray($result);
         $this->assertEmpty($result);
         
