@@ -34,6 +34,9 @@ function dbMySql()
             'database_user' => "root",
             'database_pass' => "",
         ));
+        if($db->exists()==false){
+            $db->create();
+        }
     }
     return $db;
 }

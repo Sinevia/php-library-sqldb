@@ -677,9 +677,16 @@ class SqlDb
             }
 
             if ($this->database_type == 'mysql') {
-                $result = $this->executeQuery('SHOW DATABASES;');
-                if ($result === false)
+                try{
+                    $result = $this->executeQuery('SHOW DATABASES;');
+                } catch (\Exception $e){
+                    if (stripos($e->getMessage(), 'unknown database')){
+                        return false;
+                    }
+                }
+                if ($result === false) {
                     return false;
+                }
                 $databases = array();
                 foreach ($result as $row) {
                     $databases[] = $row['Database'];
